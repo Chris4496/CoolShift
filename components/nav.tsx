@@ -7,6 +7,7 @@ import { BarChart3, Gift, Home, MessageCircle, PawPrint, Type } from "lucide-rea
 import { Mascot } from "@/components/mascot";
 import { useApp, useT } from "@/lib/store";
 import { navStrings, topBarStrings } from "@/lib/i18n";
+import { profile } from "@/lib/data";
 
 const tabs = [
   { href: "/", key: "home" as const, icon: Home },
@@ -51,6 +52,8 @@ export function BottomNav() {
 }
 
 export function Logo({ big = false }: { big?: boolean }) {
+  const { lang } = useApp();
+  const tb = topBarStrings[lang];
   return (
     <div className="flex items-center gap-2">
       <Mascot height={big ? 44 : 36} priority />
@@ -59,7 +62,7 @@ export function Logo({ big = false }: { big?: boolean }) {
           Cool Shift
         </div>
         <div className="mt-1 text-[9.5px] font-semibold uppercase tracking-[0.16em] text-clp-blue">
-          Powered by CLP
+          {tb.poweredBy}
         </div>
       </div>
     </div>
@@ -75,6 +78,14 @@ export function TopBar({
 }) {
   const { simpleMode, toggleSimpleMode, lang, toggleLang } = useApp();
   const tb = topBarStrings[lang];
+  const initials =
+    profile.name
+      .trim()
+      .split(/\s+/)
+      .map((w) => w[0] ?? "")
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "?";
   return (
     <header className="flex items-center justify-between px-5 pb-2 pt-6">
       {title ? (
@@ -83,6 +94,20 @@ export function TopBar({
         <Logo />
       )}
       <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={toggleSimpleMode}
+          title={tb.simpleTitle}
+          aria-label={tb.simpleTitle}
+          aria-pressed={simpleMode}
+          className={`tap-target flex h-8 w-8 items-center justify-center rounded-full border transition active:scale-95 ${
+            simpleMode
+              ? "border-transparent bg-ink text-white"
+              : "border-hairline bg-white text-ink"
+          }`}
+        >
+          <Type size={15} />
+        </button>
         <button
           type="button"
           onClick={toggleLang}
@@ -94,7 +119,7 @@ export function TopBar({
         </button>
         {showAvatar && (
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ink text-[12px] font-bold text-white">
-            AC
+            {initials}
           </div>
         )}
       </div>
