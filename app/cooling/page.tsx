@@ -61,7 +61,7 @@ export default function CoolingPage() {
           />
         </Card>
 
-        <div className="mt-3 rounded-card border border-hairline bg-white p-4">
+        <div className="mt-3 rounded-card border border-hairline bg-white p-4 shadow-soft">
           <div className="flex items-start gap-2.5">
             <Leaf size={15} className="mt-0.5 shrink-0 text-mute" />
             <p className="text-[12.5px] leading-relaxed text-mute">

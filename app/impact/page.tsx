@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import {
   Building2,
   Heart,
@@ -135,7 +136,7 @@ export default function ImpactPage() {
           {building.leaderboard.map((row, i) => (
             <div
               key={row.flat}
-              className={`flex items-center gap-3 px-4 py-3 ${
+              className={`flex items-center gap-3 px-4 py-3.5 ${
                 row.you ? "bg-paper" : ""
               }`}
             >
@@ -175,9 +176,9 @@ export default function ImpactPage() {
               )}
             </div>
           </div>
-          <a href="/rewards" className="tap-target rounded-full bg-ink px-4 py-2 text-[12.5px] font-semibold text-white">
+          <Link href="/rewards" className="tap-target rounded-full bg-ink px-4 py-2 text-[12.5px] font-semibold text-white">
             {t("Open", "開啟")}
-          </a>
+          </Link>
         </Card>
       </div>
 

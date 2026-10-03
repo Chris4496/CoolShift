@@ -26,7 +26,7 @@ export default function ChargingPage() {
 
       {/* Your car */}
       <div className="px-5">
-        <Card className="p-4">
+        <Card className="p-5">
           <EvCar3D chargePct={42} targetPct={target} />
           <div className="mt-1 flex items-center justify-center gap-2 text-[12.5px] font-medium text-mute">
             <Car size={14} />
@@ -36,7 +36,7 @@ export default function ChargingPage() {
       </div>
 
       {/* Battery stats */}
-      <div className="grid grid-cols-2 gap-2.5 px-5">
+      <div className="mt-2.5 grid grid-cols-2 gap-2.5 px-5">
         <Card className="p-4">
           <div className="flex items-center gap-1.5 text-[12px] font-medium text-mute">
             <BatteryCharging size={14} /> {t("Battery now", "現時電量")}
@@ -78,7 +78,7 @@ export default function ChargingPage() {
 
       {/* Plan */}
       <div className="px-5">
-        <h2 className="mb-2.5 mt-5 px-1 text-[15px] font-semibold">{t("Your charging plan", "你的充電計劃")}</h2>
+        <h2 className="mb-2.5 mt-6 px-1 text-[15px] font-semibold">{t("Your charging plan", "你的充電計劃")}</h2>
         <Card className="divide-y divide-hairline">
           <Row
             icon={<Clock size={16} />}

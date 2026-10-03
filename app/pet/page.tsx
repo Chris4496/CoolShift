@@ -59,7 +59,7 @@ export default function PetPage() {
       {/* Mood bubble + pet */}
       <div className="mt-4 flex flex-col px-5">
         <div className="relative z-10 mx-auto w-[72%]">
-          <div className="bubble-in relative rounded-[22px] border border-hairline bg-white p-3.5 shadow-soft">
+          <div className="bubble-in relative rounded-[22px] border border-hairline bg-white p-4 shadow-soft">
             <span className="absolute -bottom-[7px] left-1/2 h-3.5 w-3.5 -translate-x-1/2 rotate-45 border-b border-r border-hairline bg-white" />
             <div className="flex items-start gap-2 text-[13.5px] font-medium leading-snug">
               <span className="text-[16px]">{mood.emoji}</span>
@@ -176,7 +176,7 @@ export default function PetPage() {
       {/* Wardrobe */}
       <div className="px-5">
         <SectionTitle title={t("Wardrobe", "衣櫃")} />
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-2.5">
           {petOutfits.map((o) => {
             const unlocked = isOutfitUnlocked(o, level, ownedOutfits);
             const wearing = currentOutfit === o.id;
