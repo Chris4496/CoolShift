@@ -1,12 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { BatteryCharging, CalendarClock, Car, Clock, MapPin, Target, Zap } from "lucide-react";
 import { Card, Footnote, GhostButton, PrimaryButton, Row } from "@/components/ui";
 import { Shell, BackHeader, BottomNav } from "@/components/nav";
-import { EvCar3D } from "@/components/ev-car-3d";
 import { useApp, useT } from "@/lib/store";
 import { chargingSavingPerSession } from "@/lib/engine";
+
+// Lazy-load the three.js scene so it stays out of the initial page bundle
+const EvCar3D = dynamic(() => import("@/components/ev-car-3d").then((m) => m.EvCar3D), {
+  ssr: false,
+  loading: () => <div className="h-[190px] w-full animate-pulse rounded-2xl bg-paper" />,
+});
 
 export default function ChargingPage() {
   const { confirmCharge, chargeScheduled, toast } = useApp();

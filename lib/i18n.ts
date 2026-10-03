@@ -100,16 +100,18 @@ export const navStrings: Record<
 
 export const topBarStrings: Record<
   Lang,
-  { langButton: string; langTitle: string; simpleTitle: string }
+  { langButton: string; langTitle: string; simpleTitle: string; poweredBy: string }
 > = {
   en: {
     langButton: "中",
     langTitle: "切換至繁體中文",
     simpleTitle: "Simple mode — larger text (inclusive journeys)",
+    poweredBy: "Powered by CLP",
   },
   zh: {
     langButton: "EN",
     langTitle: "Switch to English",
     simpleTitle: "簡易模式 — 放大字體（共融設計）",
+    poweredBy: "中電驅動",
   },
 };
