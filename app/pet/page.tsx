@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { Candy, Check, Hand, Heart, Lock, Sparkles } from "lucide-react";
+import { Candy, Hand, Heart, Sparkles } from "lucide-react";
 import { Card, Footnote, ProgressBar, SectionTitle } from "@/components/ui";
 import { Shell, TopBar, BottomNav } from "@/components/nav";
 import { BurstLayer, PetFigure, useBursts } from "@/components/pet";
@@ -13,9 +13,7 @@ import {
   levelFromXp,
   moodFor,
   nextStage,
-  outfitById,
   petOutfits,
-  petStages,
   stageForLevel,
 } from "@/lib/pet";
 
@@ -254,56 +252,7 @@ export default function PetPage() {
         </Card>
       </div>
 
-      {/* Evolution path */}
       <div className="px-5">
-        <SectionTitle title={t("Evolution path", "進化之路")} />
-        <Card className="divide-y divide-hairline">
-          {petStages.map((s) => {
-            const unlocked = level >= s.minLevel;
-            return (
-              <div key={s.minLevel} className="flex items-center gap-3 p-4">
-                <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[18px] ${
-                    unlocked ? "bg-clp-sky" : "bg-paper"
-                  }`}
-                >
-                  {unlocked ? (
-                    s.outfitId ? (
-                      <Image
-                        src={outfitById(s.outfitId).src!}
-                        alt=""
-                        width={30}
-                        height={30}
-                        className="object-contain"
-                      />
-                    ) : (
-                      s.accessory || "🐣"
-                    )
-                  ) : (
-                    <Lock size={15} className="text-mute" />
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-[14.5px] font-semibold">
-                    {lang === "zh" ? s.nameZh : s.name}
-                  </div>
-                  <div className="truncate text-[12px] text-mute">
-                    {lang === "zh" ? s.taglineZh : s.tagline}
-                  </div>
-                </div>
-                <span className="shrink-0 text-[11.5px] font-semibold text-mute">
-                  {unlocked ? (
-                    <span className="flex items-center gap-1 text-clp-blue">
-                      <Check size={13} /> Lv {s.minLevel}
-                    </span>
-                  ) : (
-                    `Lv ${s.minLevel}`
-                  )}
-                </span>
-              </div>
-            );
-          })}
-        </Card>
         <Footnote>
           {t(
             "Watt-son is your energy-saving companion — concept demo",
