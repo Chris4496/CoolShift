@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   BatteryCharging,
@@ -13,8 +14,9 @@ import {
   Sun,
   Wallet,
 } from "lucide-react";
-import { Card, Footnote, Row, SectionTitle } from "@/components/ui";
+import { Card, Footnote, SectionTitle } from "@/components/ui";
 import { Shell, TopBar, BottomNav } from "@/components/nav";
+import { Mascot } from "@/components/mascot";
 import { useApp } from "@/lib/store";
 import { profile, weather } from "@/lib/data";
 import { budgetStatus, dailyTips } from "@/lib/engine";
@@ -36,6 +38,8 @@ const quickActions = [
 export default function HomePage() {
   const { budget, lang } = useApp();
   const tips = dailyTips(lang);
+  const [tipIndex, setTipIndex] = useState(0);
+  const tip = tips[tipIndex];
   const b = budgetStatus(budget);
   const tr = homeStrings[lang];
 
@@ -58,6 +62,58 @@ export default function HomePage() {
             <Droplets size={15} /> {tr.humidity(weather.humidity)}
           </span>
         </div>
+      </div>
+
+      {/* Mascot with rotating next-move tips */}
+      <div className="mt-4 flex flex-col px-5">
+        <div className="relative z-10 mx-auto w-[72%]">
+          <div
+            key={tip.id}
+            className="bubble-in relative flex h-[150px] flex-col rounded-[22px] border border-hairline bg-white p-4 shadow-soft"
+          >
+            <span className="absolute -bottom-[7px] left-1/2 h-3.5 w-3.5 -translate-x-1/2 rotate-45 border-b border-r border-hairline bg-white" />
+            <div className="flex items-center justify-between text-[11.5px] font-semibold text-mute">
+              <span>{tr.tipsTitle}</span>
+              <Link href="/insights" className="text-clp-blue">
+                {tr.seeAll}
+              </Link>
+            </div>
+            <Link href={tip.href} className="mt-2 block">
+              <div className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0">{tipIcons[tip.icon]}</span>
+                <span className="line-clamp-2 text-[15px] font-semibold leading-snug">
+                  {tip.title}
+                </span>
+              </div>
+              <div className="mt-1 line-clamp-2 text-[12.5px] leading-snug text-mute">
+                {tip.savings} · {tip.kwh}
+              </div>
+            </Link>
+            <div className="mt-auto flex items-center justify-between">
+              <div className="flex gap-1">
+                {tips.map((t, i) => (
+                  <span
+                    key={t.id}
+                    className={`h-1.5 rounded-full transition-all ${
+                      i === tipIndex ? "w-4 bg-ink" : "w-1.5 bg-hairline"
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="text-[11px] text-mute">{tr.tipsHint}</span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setTipIndex((i) => (i + 1) % tips.length)}
+          aria-label={tr.tipsHint}
+          className="-mt-8 flex flex-col items-center self-center transition active:scale-95"
+        >
+          <Mascot height={310} float priority />
+          <div className="mascot-shadow -mt-6 h-4 w-36 rounded-full bg-ink/15 blur-[4px]" />
+        </button>
       </div>
 
       {/* Quick actions */}
@@ -100,22 +156,6 @@ export default function HomePage() {
             </div>
           </Card>
         </Link>
-      </div>
-
-      {/* Today's tips */}
-      <div className="px-5">
-        <SectionTitle title={tr.tipsTitle} action={tr.seeAll} href="/insights" />
-        <Card className="divide-y divide-hairline">
-          {tips.map((t) => (
-            <Row
-              key={t.id}
-              href={t.href}
-              icon={tipIcons[t.icon]}
-              title={t.title}
-              subtitle={`${t.savings} · ${t.kwh}`}
-            />
-          ))}
-        </Card>
       </div>
 
       {/* Budget mini-card */}
