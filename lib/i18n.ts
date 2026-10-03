@@ -28,6 +28,7 @@ export interface HomeStrings {
   heroTitle: string;
   heroSubtitle: string;
   tipsTitle: string;
+  tipsHint: string;
   seeAll: string;
   budgetTitle: string;
   manage: string;
@@ -50,6 +51,7 @@ export const homeStrings: Record<Lang, HomeStrings> = {
     heroTitle: "Comfort, with less energy",
     heroSubtitle: "Your suggested setting · start 7:30 PM",
     tipsTitle: "Your next moves",
+    tipsHint: "Tap me for another",
     seeAll: "See all",
     budgetTitle: "July budget",
     manage: "Manage",
@@ -72,6 +74,7 @@ export const homeStrings: Record<Lang, HomeStrings> = {
     heroTitle: "一樣涼快，用電更少",
     heroSubtitle: "建議設定 · 晚上 7:30 開始",
     tipsTitle: "下一步做咩好",
+    tipsHint: "撳我睇下一個",
     seeAll: "查看全部",
     budgetTitle: "七月預算",
     manage: "管理",

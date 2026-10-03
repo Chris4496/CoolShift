@@ -86,8 +86,24 @@ body {
 .mascot-float {
   animation: mascot-float 3.2s ease-in-out infinite;
 }
+/* Ground shadow that shrinks and fades as the mascot rises */
+@keyframes mascot-shadow {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleX(0.86);
+    opacity: 0.7;
+  }
+}
+.mascot-shadow {
+  animation: mascot-shadow 3.2s ease-in-out infinite;
+}
 @media (prefers-reduced-motion: reduce) {
-  .mascot-float {
+  .mascot-float,
+  .mascot-shadow {
     animation: none;
   }
 }
