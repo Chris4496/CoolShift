@@ -22,7 +22,7 @@ export function BottomNav() {
   const labels = navStrings[lang];
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex justify-center">
-      <div className="w-full max-w-phone border-t border-hairline bg-white/90 px-6 pb-5 pt-2 backdrop-blur-md">
+      <div className="w-full max-w-phone border-t border-hairline bg-white/90 px-6 py-2 backdrop-blur-md">
         <div className="flex items-center justify-between">
           {tabs.map((tab) => {
             const active =
@@ -116,9 +116,15 @@ export function BackHeader({ title, subtitle }: { title: string; subtitle?: stri
 }
 
 // Phone-style page shell: centered column with bottom-nav clearance
-export function Shell({ children }: { children: React.ReactNode }) {
+export function Shell({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-phone bg-paper pb-32">
+    <div className={`mx-auto min-h-dvh w-full max-w-phone bg-paper pb-32 ${className}`}>
       {children}
     </div>
   );

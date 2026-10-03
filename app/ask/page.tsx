@@ -92,7 +92,9 @@ export default function AskPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [history, typing]);
 
   function send(text: string) {
@@ -113,9 +115,9 @@ export default function AskPage() {
   const offer = localize(partnerOffers[0], lang);
 
   return (
-    <Shell>
+    <Shell className="flex h-dvh flex-col overflow-hidden !pb-[68.75px]">
       {/* Header */}
-      <header className="flex items-center gap-3 px-5 pb-3 pt-6">
+      <header className="flex shrink-0 items-center gap-3 px-5 pb-3 pt-6">
         <Mascot height={56} float priority />
         <div>
           <h1 className="text-[19px] font-bold tracking-tight">{t("Ask Cool Shift", "問 Cool Shift")}</h1>
@@ -126,7 +128,7 @@ export default function AskPage() {
       </header>
 
       {/* Quick chips */}
-      <div className="no-scrollbar flex gap-2 overflow-x-auto px-5 pb-3">
+      <div className="no-scrollbar flex shrink-0 gap-2 overflow-x-auto px-5 pb-3">
         {chips[lang].map((c) => (
           <button
             key={c}
@@ -140,7 +142,7 @@ export default function AskPage() {
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex flex-col gap-3 px-5">
+      <div ref={scrollRef} className="no-scrollbar flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-5 pb-6">
         {messages.map((m, i) => (
           <div
             key={i}
@@ -302,7 +304,7 @@ export default function AskPage() {
       </div>
 
       {/* Input */}
-      <div className="fixed inset-x-0 bottom-[76px] z-40 mx-auto w-full max-w-phone bg-paper/95 px-5 pb-2 pt-2 backdrop-blur-sm">
+      <div className="shrink-0 bg-paper px-5 pb-2 pt-2">
         <div className="flex items-center gap-2">
           <div className="flex flex-1 items-center rounded-full border border-hairline bg-white px-4">
             <input
