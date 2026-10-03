@@ -9,6 +9,7 @@ import React, {
   useState,
 } from "react";
 import { greenFunds, missions, partnerOffers, profile } from "./data";
+import type { Lang } from "./i18n";
 
 export interface Investment {
   fundId: string;
@@ -19,6 +20,7 @@ export interface AppState {
   points: number;
   budget: number;
   simpleMode: boolean;
+  lang: Lang;
   missionProgress: Record<string, number>;
   completedMissions: string[];
   portfolio: Investment[];
@@ -33,6 +35,7 @@ interface AppContextValue extends AppState {
   addPoints: (n: number, reason?: string) => void;
   setBudget: (n: number) => void;
   toggleSimpleMode: () => void;
+  toggleLang: () => void;
   checkInMission: (id: string) => void;
   redeemOffer: (id: string) => void;
   invest: (fundId: string, points: number) => void;
@@ -45,6 +48,7 @@ const initialState: AppState = {
   points: 240,
   budget: profile.monthlyBudget,
   simpleMode: false,
+  lang: "en",
   missionProgress: Object.fromEntries(missions.map((m) => [m.id, m.startProgress])),
   completedMissions: [],
   portfolio: [{ fundId: "hk-solar", points: 60 }],
@@ -112,6 +116,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const toggleSimpleMode = useCallback(() => {
     setState((s) => ({ ...s, simpleMode: !s.simpleMode }));
+  }, []);
+
+  const toggleLang = useCallback(() => {
+    setState((s) => ({ ...s, lang: s.lang === "en" ? "zh" : "en" }));
   }, []);
 
   const checkInMission = useCallback(
@@ -225,6 +233,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     addPoints,
     setBudget,
     toggleSimpleMode,
+    toggleLang,
     checkInMission,
     redeemOffer,
     invest,

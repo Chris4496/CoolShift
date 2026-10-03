@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { BatteryCharging, CalendarClock, Car, Clock, MapPin, Target, Zap } from "lucide-react";
 import { Card, Footnote, GhostButton, PrimaryButton, Row } from "@/components/ui";
 import { Shell, BackHeader, BottomNav } from "@/components/nav";
-import { EvGraphic } from "@/components/charts";
+import { EvCar3D } from "@/components/ev-car-3d";
 import { useApp } from "@/lib/store";
 import { chargingSavingPerSession } from "@/lib/engine";
 
@@ -21,7 +21,7 @@ export default function ChargingPage() {
       {/* Your car */}
       <div className="px-5">
         <Card className="p-4">
-          <EvGraphic chargePct={42} targetPct={target} />
+          <EvCar3D chargePct={42} targetPct={target} />
           <div className="mt-1 flex items-center justify-center gap-2 text-[12.5px] font-medium text-mute">
             <Car size={14} />
             <span>EV Sedan · 58 kWh battery · plugged in at home</span>

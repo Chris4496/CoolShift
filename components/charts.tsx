@@ -94,63 +94,6 @@ export function PaceBar({
   );
 }
 
-// ── EV infographic: sedan side view, charge port + cable to wallbox ─────────
-export function EvGraphic({ chargePct, targetPct }: { chargePct: number; targetPct: number }) {
-  return (
-    <svg viewBox="0 0 340 160" className="w-full" role="img" aria-label="Electric car charging">
-      {/* wallbox charger */}
-      <rect x="296" y="34" width="30" height="52" rx="7" fill="#00294d" />
-      <circle cx="311" cy="47" r="4.5" fill="#f26522" />
-      <rect x="304" y="58" width="14" height="4" rx="2" fill="#ffffff" opacity="0.5" />
-      {/* charging cable */}
-      <path
-        d="M 296 74 C 268 96, 252 78, 228 92"
-        fill="none"
-        stroke="#00294d"
-        strokeWidth="5"
-        strokeLinecap="round"
-      />
-      {/* car body */}
-      <path
-        d="M 28 108 C 34 84, 62 66, 104 62 L 150 58 C 192 58, 214 74, 224 88 L 244 94 C 256 98, 260 106, 256 114 L 252 120 L 34 120 Z"
-        fill="#0057a8"
-      />
-      {/* windows */}
-      <path
-        d="M 96 68 C 118 64, 142 62, 158 62 L 186 64 C 200 68, 210 76, 216 86 L 112 86 C 102 86, 94 78, 96 68 Z"
-        fill="#e8f2fa"
-      />
-      {/* charge port */}
-      <circle cx="226" cy="92" r="6" fill="#f26522" stroke="#fff" strokeWidth="2" />
-      {/* wheels */}
-      <circle cx="86" cy="120" r="17" fill="#00294d" />
-      <circle cx="86" cy="120" r="7" fill="#f6f6f4" />
-      <circle cx="212" cy="120" r="17" fill="#00294d" />
-      <circle cx="212" cy="120" r="7" fill="#f6f6f4" />
-      {/* ground */}
-      <rect x="14" y="136" width="318" height="3" rx="1.5" fill="#e9e9e6" />
-      {/* battery bar */}
-      <rect x="60" y="146" width="200" height="8" rx="4" fill="#e8f2fa" />
-      <rect
-        x="60"
-        y="146"
-        width={(200 * chargePct) / 100}
-        height="8"
-        rx="4"
-        fill="#0057a8"
-      />
-      {/* target marker */}
-      <rect x={58 + (200 * targetPct) / 100} y="143" width="3" height="14" rx="1.5" fill="#f26522" />
-      <text x="66" y="143" fontSize="8.5" fill="#6f6f6a">{chargePct}%</text>
-      <text x={52 + (200 * targetPct) / 100} y="134" fontSize="8.5" fill="#f26522" fontWeight="700">
-        {targetPct}%
-      </text>
-      {/* energy bolt on body */}
-      <path d="M 150 92 l 8 0 -5 8 7 0 -13 12 3 -9 -6 0 z" fill="#f26522" />
-    </svg>
-  );
-}
-
 // ── Illustrative Sha Tin map (stylised SVG, pins positioned by % coords) ─────
 export function FauxMap({
   pins,

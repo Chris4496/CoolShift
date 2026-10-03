@@ -18,6 +18,7 @@ import { Shell, TopBar, BottomNav } from "@/components/nav";
 import { useApp } from "@/lib/store";
 import { profile, weather } from "@/lib/data";
 import { budgetStatus, dailyTips } from "@/lib/engine";
+import { homeStrings, tipStrings, zhSavings } from "@/lib/i18n";
 
 const tipIcons = {
   snowflake: <Snowflake size={17} />,
@@ -26,39 +27,36 @@ const tipIcons = {
 };
 
 const quickActions = [
-  { href: "/cooling", label: "Cooling", icon: Snowflake },
-  { href: "/charging", label: "EV", icon: Car },
-  { href: "/budget", label: "Budget", icon: Wallet },
-  { href: "/impact", label: "Impact", icon: Building2 },
+  { href: "/cooling", key: "cooling" as const, icon: Snowflake },
+  { href: "/charging", key: "ev" as const, icon: Car },
+  { href: "/budget", key: "budget" as const, icon: Wallet },
+  { href: "/impact", key: "impact" as const, icon: Building2 },
 ];
 
 export default function HomePage() {
-  const { budget } = useApp();
+  const { budget, lang } = useApp();
   const tips = dailyTips();
   const b = budgetStatus(budget);
+  const tr = homeStrings[lang];
+  const tipTr = tipStrings[lang];
 
   return (
     <Shell>
       <TopBar />
 
-      {/* Brand slogan */}
-      <div className="px-5 pb-1">
-        <p className="text-[21px] font-extrabold leading-snug tracking-tight text-clp-navy">
-          Small actions. <span className="text-clp-orange">Everyday value.</span>
-        </p>
-      </div>
-
       {/* Greeting */}
       <div className="px-5">
-        <h1 className="mt-1 text-[26px] font-bold tracking-tight">Hi {profile.name}</h1>
-        <p className="text-[14px] text-mute">Let’s make today feel better.</p>
+        <h1 className="mt-1 text-[26px] font-bold tracking-tight">
+          {tr.greeting(profile.name)}
+        </h1>
+        <p className="text-[14px] text-mute">{tr.tagline}</p>
         <div className="mt-3 flex items-center gap-4 text-[13.5px] font-medium">
           <span className="flex items-center gap-1.5">
             <Sun size={16} /> {weather.tempC}°C
           </span>
           <span className="h-4 w-px bg-hairline" />
           <span className="flex items-center gap-1.5 text-mute">
-            <Droplets size={15} /> Humidity {weather.humidity}%
+            <Droplets size={15} /> {tr.humidity(weather.humidity)}
           </span>
         </div>
       </div>
@@ -76,7 +74,7 @@ export default function HomePage() {
             }`}
           >
             <a.icon size={20} strokeWidth={1.9} />
-            {a.label}
+            {tr.quick[a.key]}
           </Link>
         ))}
       </div>
@@ -88,13 +86,13 @@ export default function HomePage() {
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-[15px] font-medium text-white/80">
-                  Comfort, with less energy
+                  {tr.heroTitle}
                 </div>
                 <div className="mt-2 text-[44px] font-bold leading-none tracking-tight">
                   25.5°C
                 </div>
                 <div className="mt-1.5 text-[13px] text-white/60">
-                  Your suggested setting · start 7:30 PM
+                  {tr.heroSubtitle}
                 </div>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10">
@@ -107,23 +105,30 @@ export default function HomePage() {
 
       {/* Today's tips */}
       <div className="px-5">
-        <SectionTitle title="Your next moves" action="See all" href="/insights" />
+        <SectionTitle title={tr.tipsTitle} action={tr.seeAll} href="/insights" />
         <Card className="divide-y divide-hairline">
-          {tips.map((t) => (
-            <Row
-              key={t.id}
-              href={t.href}
-              icon={tipIcons[t.icon]}
-              title={t.title}
-              subtitle={`${t.savings} · ${t.kwh}`}
-            />
-          ))}
+          {tips.map((t) => {
+            const zh = tipTr[t.id];
+            return (
+              <Row
+                key={t.id}
+                href={t.href}
+                icon={tipIcons[t.icon]}
+                title={zh?.title ?? t.title}
+                subtitle={
+                  zh
+                    ? `${zhSavings(t.savings)} · ${zh.kwh}`
+                    : `${t.savings} · ${t.kwh}`
+                }
+              />
+            );
+          })}
         </Card>
       </div>
 
       {/* Budget mini-card */}
       <div className="px-5">
-        <SectionTitle title="July budget" action="Manage" href="/budget" />
+        <SectionTitle title={tr.budgetTitle} action={tr.manage} href="/budget" />
         <Link href="/budget">
           <Card className="p-4">
             <div className="flex items-center justify-between">
@@ -133,12 +138,12 @@ export default function HomePage() {
                 </div>
                 <div>
                   <div className="text-[15px] font-semibold">
-                    HK${b.spentHkd} of HK${b.budget}
+                    {tr.budgetOf(b.spentHkd, b.budget)}
                   </div>
                   <div className="text-[12.5px] text-mute">
                     {b.over
-                      ? `Projected HK$${b.projected} — ~HK$${b.delta} over, let’s fix that`
-                      : `On track — projected HK$${b.projected}`}
+                      ? tr.budgetOver(b.projected, b.delta)
+                      : tr.budgetOnTrack(b.projected)}
                   </div>
                 </div>
               </div>
@@ -150,23 +155,23 @@ export default function HomePage() {
 
       {/* Community mini-card */}
       <div className="px-5">
-        <SectionTitle title="Your block" action="See impact" href="/impact" />
+        <SectionTitle title={tr.blockTitle} action={tr.seeImpact} href="/impact" />
         <Link href="/impact">
           <Card dark className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-[14px] font-medium text-white/85">
-                  Block 7 has shifted 412 kWh this month
+                  {tr.blockLine1}
                 </div>
                 <div className="mt-0.5 text-[12.5px] text-white/55">
-                  You’re #2 of 86 households — 18.2 kWh and counting
+                  {tr.blockLine2}
                 </div>
               </div>
               <Building2 size={22} className="text-white/70" />
             </div>
           </Card>
         </Link>
-        <Footnote>Concept demo · illustrative smart-meter, tariff and partner data</Footnote>
+        <Footnote>{tr.footnote}</Footnote>
       </div>
 
       <BottomNav />

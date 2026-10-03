@@ -5,16 +5,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BarChart3, Gift, Home, MessageCircle, Type, Zap } from "lucide-react";
 import { useApp } from "@/lib/store";
+import { navStrings, topBarStrings } from "@/lib/i18n";
 
 const tabs = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/insights", label: "Insights", icon: BarChart3 },
-  { href: "/ask", label: "Ask", icon: MessageCircle },
-  { href: "/rewards", label: "Rewards", icon: Gift },
+  { href: "/", key: "home" as const, icon: Home },
+  { href: "/insights", key: "insights" as const, icon: BarChart3 },
+  { href: "/ask", key: "ask" as const, icon: MessageCircle },
+  { href: "/rewards", key: "rewards" as const, icon: Gift },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { lang } = useApp();
+  const labels = navStrings[lang];
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex justify-center">
       <div className="w-full max-w-phone border-t border-hairline bg-white/90 px-6 pb-5 pt-2 backdrop-blur-md">
@@ -23,6 +26,7 @@ export function BottomNav() {
             const active =
               tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
             const Icon = tab.icon;
+            const label = labels[tab.key];
             return (
               <Link
                 key={tab.href}
@@ -33,7 +37,7 @@ export function BottomNav() {
               >
                 <Icon size={22} strokeWidth={active ? 2.4 : 1.8} />
                 <span className={`text-[10.5px] ${active ? "font-semibold" : "font-medium"}`}>
-                  {tab.label}
+                  {label}
                 </span>
               </Link>
             );
@@ -73,7 +77,8 @@ export function TopBar({
   title?: string;
   showAvatar?: boolean;
 }) {
-  const { simpleMode, toggleSimpleMode } = useApp();
+  const { simpleMode, toggleSimpleMode, lang, toggleLang } = useApp();
+  const tb = topBarStrings[lang];
   return (
     <header className="flex items-center justify-between px-5 pb-2 pt-6">
       {title ? (
@@ -84,8 +89,17 @@ export function TopBar({
       <div className="flex items-center gap-2">
         <button
           type="button"
+          onClick={toggleLang}
+          title={tb.langTitle}
+          aria-label={tb.langTitle}
+          className="tap-target flex h-8 min-w-8 items-center justify-center rounded-full border border-hairline bg-white px-2 text-[12px] font-bold text-ink transition active:scale-95"
+        >
+          {tb.langButton}
+        </button>
+        <button
+          type="button"
           onClick={toggleSimpleMode}
-          title="Simple mode — larger text (inclusive journeys)"
+          title={tb.simpleTitle}
           className={`tap-target flex items-center gap-1 rounded-full border px-3 py-1.5 text-[12px] font-semibold transition ${
             simpleMode
               ? "border-ink bg-ink text-white"
