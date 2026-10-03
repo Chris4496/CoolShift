@@ -90,11 +90,11 @@ body {
 @keyframes mascot-shadow {
   0%,
   100% {
-    transform: scaleX(1);
+    transform: scale(1);
     opacity: 1;
   }
   50% {
-    transform: scaleX(0.86);
+    transform: scale(0.86);
     opacity: 0.7;
   }
 }

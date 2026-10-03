@@ -51,7 +51,7 @@ export default function PetPage() {
       {/* Title */}
       <div className="px-5">
         <h1 className="mt-1 text-[26px] font-bold tracking-tight">
-          {t("Snowie", "雪寶")} · Lv {level}
+          {t("Watt-son", "節能仔")} · Lv {level}
         </h1>
         <p className="text-[14px] text-mute">
           {stage.accessory} {stageName} — {lang === "zh" ? stage.taglineZh : stage.tagline}
@@ -77,13 +77,13 @@ export default function PetPage() {
               patPet();
               pat.spawn();
             }}
-            aria-label={t("Pat Snowie", "摸一摸雪寶")}
+            aria-label={t("Pat Watt-son", "摸一摸節能仔")}
             className="relative transition active:scale-95"
           >
             <BurstLayer bursts={pat.bursts} />
             <PetFigure height={300} priority />
           </button>
-          <div className="mascot-shadow mx-auto -mt-5 h-4 w-36 rounded-full bg-ink/15 blur-[4px]" />
+          <div className="mascot-shadow mx-auto -mt-10 h-14 w-40 rounded-full bg-[radial-gradient(ellipse,rgba(17,17,16,0.3)_0%,rgba(17,17,16,0.12)_50%,transparent_72%)]" />
         </div>
       </div>
 
@@ -245,8 +245,8 @@ export default function PetPage() {
               </div>
               <p className="mt-1 text-[12.5px] leading-relaxed text-white/60">
                 {t(
-                  "Complete missions, apply tonight’s plan and shift energy — every point you earn also feeds your companion. The greener your home, the stronger Snowie grows.",
-                  "完成任務、套用今晚計劃、轉移用電 — 你賺到的每 1 分同時養大你的小伙伴。屋企越環保，雪寶就越強大。"
+                  "Complete missions, apply tonight’s plan and shift energy — every point you earn also feeds your companion. The greener your home, the stronger Watt-son grows.",
+                  "完成任務、套用今晚計劃、轉移用電 — 你賺到的每 1 分同時養大你的小伙伴。屋企越環保，節能仔就越強大。"
                 )}
               </p>
             </div>
@@ -306,8 +306,8 @@ export default function PetPage() {
         </Card>
         <Footnote>
           {t(
-            "Snowie is your energy-saving companion — concept demo",
-            "雪寶是你的節能小伙伴 — 概念示範"
+            "Watt-son is your energy-saving companion — concept demo",
+            "節能仔是你的節能小伙伴 — 概念示範"
           )}
         </Footnote>
       </div>

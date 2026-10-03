@@ -123,7 +123,7 @@ export default function HomePage() {
         >
           <BurstLayer bursts={hearts.bursts} />
           <PetFigure height={310} priority />
-          <div className="mascot-shadow -mt-6 h-4 w-36 rounded-full bg-ink/15 blur-[4px]" />
+          <div className="mascot-shadow -mt-10 h-14 w-40 rounded-full bg-[radial-gradient(ellipse,rgba(17,17,16,0.3)_0%,rgba(17,17,16,0.12)_50%,transparent_72%)]" />
         </button>
 
         {/* Raising-game entry: token balance + feed CTA */}
@@ -133,8 +133,8 @@ export default function HomePage() {
         >
           <Candy size={14} className="text-clp-blue" />
           {lang === "zh"
-            ? `雪寶 · ${petSnacks} 粒涼涼果`
-            : `Snowie · ${petSnacks} Frosties`}
+            ? `節能仔 · ${petSnacks} 粒涼涼果`
+            : `Watt-son · ${petSnacks} Frosties`}
           <span className="text-clp-blue">
             {lang === "zh" ? "去餵食 ›" : "Feed me ›"}
           </span>

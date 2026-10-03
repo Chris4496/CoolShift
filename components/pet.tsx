@@ -55,7 +55,7 @@ export function PetFigure({
       {outfit ? (
         <Image
           src={outfit.src!}
-          alt={`Snowie wearing ${outfit.name}`}
+          alt={`Watt-son wearing ${outfit.name}`}
           width={Math.round(height * outfit.ratio)}
           height={height}
           priority={priority}

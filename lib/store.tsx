@@ -323,16 +323,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           toast(
             autoOutfit
               ? t(
-                  `✨ Evolution! Snowie became ${after.name} — new outfit unlocked!`,
-                  `✨ 進化啦！雪寶變成${after.nameZh} — 新套裝已解鎖！`
+                  `✨ Evolution! Watt-son became ${after.name} — new outfit unlocked!`,
+                  `✨ 進化啦！節能仔變成${after.nameZh} — 新套裝已解鎖！`
                 )
               : t(
-                  `✨ Evolution! Snowie became ${after.name} ${after.accessory}`,
-                  `✨ 進化啦！雪寶變成${after.nameZh} ${after.accessory}`
+                  `✨ Evolution! Watt-son became ${after.name} ${after.accessory}`,
+                  `✨ 進化啦！節能仔變成${after.nameZh} ${after.accessory}`
                 )
           );
         else if (afterLvl > levelFromXp(s.petXp).level)
-          toast(t(`Level up! Snowie is now Lv ${afterLvl} 🎉`, `升級啦！雪寶升到 Lv ${afterLvl} 🎉`));
+          toast(t(`Level up! Watt-son is now Lv ${afterLvl} 🎉`, `升級啦！節能仔升到 Lv ${afterLvl} 🎉`));
         else
           toast(t(`Yum yum! +${XP_PER_FEED} XP`, `好味好味！+${XP_PER_FEED} 經驗`));
       }, 0);
@@ -374,8 +374,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           () =>
             toast(
               t(
-                `New outfit: "${outfit.name}"! Snowie looks great 🎀`,
-                `新套裝：「${outfit.nameZh}」！雪寶好靚仔 🎀`
+                `New outfit: "${outfit.name}"! Watt-son looks great 🎀`,
+                `新套裝：「${outfit.nameZh}」！節能仔好靚仔 🎀`
               )
             ),
           0

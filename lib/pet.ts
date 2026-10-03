@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Cool Shift · mascot raising game ("Snowie" 雪寶)
+// Cool Shift · mascot raising game ("Watt-son" 節能仔)
 //
 // Companion-token loop: every loyalty point the household earns also mints one
 // "Frosty" (涼涼果) snack token. Frosties are spent feeding the mascot, which
@@ -97,7 +97,7 @@ export const petStages: PetStage[] = [
 
 // ── Wardrobe ─────────────────────────────────────────────────────────────────
 // Outfits are full-character renders (transparent PNG, bottom-anchored on a
-// 512-tall canvas) so swapping them never shifts Snowie's pose or size.
+// 512-tall canvas) so swapping them never shifts Watt-son's pose or size.
 export interface PetOutfit {
   id: string;
   name: string;
@@ -115,8 +115,8 @@ export interface PetOutfit {
 export const petOutfits: PetOutfit[] = [
   {
     id: "base",
-    name: "Classic Snowie",
-    nameZh: "經典雪寶",
+    name: "Classic Watt-son",
+    nameZh: "經典節能仔",
     src: null,
     ratio: 375 / 512,
     unlock: { type: "default" },

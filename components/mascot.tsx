@@ -17,7 +17,7 @@ export function Mascot({
   return (
     <Image
       src={height > 80 ? "/mascot.png" : "/mascot-sm.png"}
-      alt="Cool Shift mascot"
+      alt="Watt-son"
       width={Math.round(height * RATIO)}
       height={height}
       priority={priority}
