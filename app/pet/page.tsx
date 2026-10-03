@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Candy, Check, Hand, Heart, Lock, Sparkles } from "lucide-react";
 import { Card, Footnote, ProgressBar, SectionTitle } from "@/components/ui";
 import { Shell, TopBar, BottomNav } from "@/components/nav";
@@ -8,15 +9,30 @@ import { BurstLayer, PetFigure, useBursts } from "@/components/pet";
 import { useApp, useT } from "@/lib/store";
 import {
   XP_PER_FEED,
+  isOutfitUnlocked,
   levelFromXp,
   moodFor,
   nextStage,
+  outfitById,
+  petOutfits,
   petStages,
   stageForLevel,
 } from "@/lib/pet";
 
 export default function PetPage() {
-  const { petSnacks, petXp, petFeeds, lastFedAt, feedPet, patPet, lang } = useApp();
+  const {
+    petSnacks,
+    petXp,
+    petFeeds,
+    lastFedAt,
+    feedPet,
+    patPet,
+    lang,
+    ownedOutfits,
+    currentOutfit,
+    buyOutfit,
+    equipOutfit,
+  } = useApp();
   const t = useT();
   const { level, into, needed } = levelFromXp(petXp);
   const stage = stageForLevel(level);
@@ -111,10 +127,15 @@ export default function PetPage() {
           </div>
           {upcoming && (
             <div className="mt-2 text-[12px] text-mute">
-              {t(
-                `Lv ${upcoming.minLevel}: evolves into ${upcoming.name} ${upcoming.accessory}`,
-                `Lv ${upcoming.minLevel} 進化成${upcoming.nameZh} ${upcoming.accessory}`
-              )}
+              {upcoming.outfitId
+                ? t(
+                    `Lv ${upcoming.minLevel}: evolves & unlocks the “${upcoming.name}” outfit`,
+                    `Lv ${upcoming.minLevel} 進化並解鎖「${upcoming.nameZh}」套裝`
+                  )
+                : t(
+                    `Lv ${upcoming.minLevel}: evolves into ${upcoming.name} ${upcoming.accessory}`,
+                    `Lv ${upcoming.minLevel} 進化成${upcoming.nameZh} ${upcoming.accessory}`
+                  )}
             </div>
           )}
         </Card>
@@ -154,6 +175,65 @@ export default function PetPage() {
         </button>
       </div>
 
+      {/* Wardrobe */}
+      <div className="px-5">
+        <SectionTitle title={t("Wardrobe", "衣櫃")} />
+        <div className="grid grid-cols-4 gap-2">
+          {petOutfits.map((o) => {
+            const unlocked = isOutfitUnlocked(o, level, ownedOutfits);
+            const wearing = currentOutfit === o.id;
+            const affordable =
+              o.unlock.type === "shop" && petSnacks >= o.unlock.cost;
+            return (
+              <button
+                key={o.id}
+                type="button"
+                onClick={() => {
+                  if (unlocked) equipOutfit(o.id);
+                  else if (o.unlock.type === "shop") buyOutfit(o.id);
+                }}
+                className={`tap-target flex flex-col items-center rounded-2xl border p-2 transition active:scale-95 ${
+                  wearing
+                    ? "border-clp-blue bg-clp-sky"
+                    : "border-hairline bg-white"
+                } ${!unlocked && o.unlock.type === "stage" ? "opacity-60" : ""}`}
+              >
+                <div className="flex h-16 items-end justify-center">
+                  <Image
+                    src={o.src ?? "/mascot-sm.png"}
+                    alt={lang === "zh" ? o.nameZh : o.name}
+                    width={Math.round(64 * o.ratio)}
+                    height={64}
+                    className="select-none"
+                    draggable={false}
+                  />
+                </div>
+                <div className="mt-1.5 w-full truncate text-center text-[10.5px] font-semibold leading-tight">
+                  {lang === "zh" ? o.nameZh : o.name}
+                </div>
+                <div
+                  className={`mt-0.5 text-[10px] font-bold ${
+                    wearing ? "text-clp-blue" : "text-mute"
+                  }`}
+                >
+                  {wearing
+                    ? t("Wearing ✓", "著緊 ✓")
+                    : unlocked
+                      ? t("Wear", "換上")
+                      : o.unlock.type === "shop"
+                        ? affordable
+                          ? `${o.unlock.cost} 🍬`
+                          : `${o.unlock.cost} 🍬 🔒`
+                        : o.unlock.type === "stage"
+                          ? `Lv ${o.unlock.minLevel} 🔒`
+                          : ""}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* How the token loop works */}
       <div className="px-5">
         <Card dark className="mt-4 p-4">
@@ -187,7 +267,21 @@ export default function PetPage() {
                     unlocked ? "bg-clp-sky" : "bg-paper"
                   }`}
                 >
-                  {unlocked ? s.accessory || "🐣" : <Lock size={15} className="text-mute" />}
+                  {unlocked ? (
+                    s.outfitId ? (
+                      <Image
+                        src={outfitById(s.outfitId).src!}
+                        alt=""
+                        width={30}
+                        height={30}
+                        className="object-contain"
+                      />
+                    ) : (
+                      s.accessory || "🐣"
+                    )
+                  ) : (
+                    <Lock size={15} className="text-mute" />
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-[14.5px] font-semibold">

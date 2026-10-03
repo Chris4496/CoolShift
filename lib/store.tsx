@@ -15,7 +15,9 @@ import {
   XP_PER_PAT,
   PAT_COOLDOWN_MS,
   STARTING_SNACKS,
+  isOutfitUnlocked,
   levelFromXp,
+  outfitById,
   stageForLevel,
 } from "./pet";
 
@@ -42,6 +44,8 @@ export interface AppState {
   petFeeds: number;
   lastFedAt: number | null;
   lastPatAt: number | null;
+  ownedOutfits: string[]; // shop-purchased outfit ids
+  currentOutfit: string; // equipped outfit id
 }
 
 interface AppContextValue extends AppState {
@@ -58,6 +62,8 @@ interface AppContextValue extends AppState {
   joinChallenge: () => void;
   feedPet: () => void;
   patPet: () => void;
+  buyOutfit: (id: string) => void;
+  equipOutfit: (id: string) => void;
 }
 
 const initialState: AppState = {
@@ -77,6 +83,8 @@ const initialState: AppState = {
   petFeeds: 0,
   lastFedAt: null,
   lastPatAt: null,
+  ownedOutfits: [],
+  currentOutfit: "base",
 };
 
 const STORAGE_KEY = "coolshift-v1";
@@ -307,13 +315,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const before = stageForLevel(levelFromXp(s.petXp).level);
       const afterLvl = levelFromXp(xp).level;
       const after = stageForLevel(afterLvl);
+      // Evolving into a stage with a real outfit auto-equips it
+      const evolves = after.minLevel > before.minLevel;
+      const autoOutfit = evolves && after.outfitId ? after.outfitId : null;
       setTimeout(() => {
-        if (after.minLevel > before.minLevel)
+        if (evolves)
           toast(
-            t(
-              `✨ Evolution! Snowie became ${after.name} ${after.accessory}`,
-              `✨ 進化啦！雪寶變成${after.nameZh} ${after.accessory}`
-            )
+            autoOutfit
+              ? t(
+                  `✨ Evolution! Snowie became ${after.name} — new outfit unlocked!`,
+                  `✨ 進化啦！雪寶變成${after.nameZh} — 新套裝已解鎖！`
+                )
+              : t(
+                  `✨ Evolution! Snowie became ${after.name} ${after.accessory}`,
+                  `✨ 進化啦！雪寶變成${after.nameZh} ${after.accessory}`
+                )
           );
         else if (afterLvl > levelFromXp(s.petXp).level)
           toast(t(`Level up! Snowie is now Lv ${afterLvl} 🎉`, `升級啦！雪寶升到 Lv ${afterLvl} 🎉`));
@@ -326,9 +342,63 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         petXp: xp,
         petFeeds: s.petFeeds + 1,
         lastFedAt: Date.now(),
+        currentOutfit: autoOutfit ?? s.currentOutfit,
       };
     });
   }, [toast]);
+
+  // ── Wardrobe ───────────────────────────────────────────────────────────
+
+  const buyOutfit = useCallback(
+    (id: string) => {
+      const outfit = outfitById(id);
+      const unlock = outfit.unlock;
+      if (unlock.type !== "shop") return;
+      setState((s) => {
+        if (s.ownedOutfits.includes(id)) return s;
+        const t = translator(s.lang);
+        if (s.petSnacks < unlock.cost) {
+          setTimeout(
+            () =>
+              toast(
+                t(
+                  `Not enough Frosties — "${outfit.name}" costs ${unlock.cost} 🍬`,
+                  `涼涼果唔夠 — 「${outfit.nameZh}」要 ${unlock.cost} 🍬`
+                )
+              ),
+            0
+          );
+          return s;
+        }
+        setTimeout(
+          () =>
+            toast(
+              t(
+                `New outfit: "${outfit.name}"! Snowie looks great 🎀`,
+                `新套裝：「${outfit.nameZh}」！雪寶好靚仔 🎀`
+              )
+            ),
+          0
+        );
+        return {
+          ...s,
+          petSnacks: s.petSnacks - unlock.cost,
+          ownedOutfits: [...s.ownedOutfits, id],
+          currentOutfit: id,
+        };
+      });
+    },
+    [toast]
+  );
+
+  const equipOutfit = useCallback((id: string) => {
+    setState((s) => {
+      const outfit = outfitById(id);
+      const level = levelFromXp(s.petXp).level;
+      if (!isOutfitUnlocked(outfit, level, s.ownedOutfits)) return s;
+      return { ...s, currentOutfit: id };
+    });
+  }, []);
 
   // Free affection on a short cooldown — tiny XP so tapping feels rewarding
   const patPet = useCallback(() => {
@@ -378,6 +448,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     joinChallenge,
     feedPet,
     patPet,
+    buyOutfit,
+    equipOutfit,
   };
 
   return (

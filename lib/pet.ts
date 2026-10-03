@@ -40,6 +40,7 @@ export interface PetStage {
   nameZh: string;
   accessory: string; // emoji worn by the mascot ("" = none)
   aura: boolean; // glowing aura ring behind the mascot
+  outfitId?: string; // real outfit image auto-unlocked at this stage
   tagline: string;
   taglineZh: string;
 }
@@ -76,8 +77,9 @@ export const petStages: PetStage[] = [
     minLevel: 8,
     name: "Eco Master",
     nameZh: "節能大師",
-    accessory: "🌿",
+    accessory: "",
     aura: true,
+    outfitId: "eco",
     tagline: "Every kWh shifted makes it stronger.",
     taglineZh: "每轉移一度電，佢都會變強。",
   },
@@ -85,12 +87,87 @@ export const petStages: PetStage[] = [
     minLevel: 12,
     name: "Aurora Guardian",
     nameZh: "極光守護神",
-    accessory: "👑",
+    accessory: "",
     aura: true,
+    outfitId: "aurora",
     tagline: "Legend says it cools the whole estate.",
     taglineZh: "傳說佢可以令全邨都涼快。",
   },
 ];
+
+// ── Wardrobe ─────────────────────────────────────────────────────────────────
+// Outfits are full-character renders (transparent PNG, bottom-anchored on a
+// 512-tall canvas) so swapping them never shifts Snowie's pose or size.
+export interface PetOutfit {
+  id: string;
+  name: string;
+  nameZh: string;
+  src: string | null; // null = base mascot art
+  ratio: number; // image width / height
+  unlock:
+    | { type: "default" }
+    | { type: "stage"; minLevel: number }
+    | { type: "shop"; cost: number }; // cost in Frosties
+  blurb: string;
+  blurbZh: string;
+}
+
+export const petOutfits: PetOutfit[] = [
+  {
+    id: "base",
+    name: "Classic Snowie",
+    nameZh: "經典雪寶",
+    src: null,
+    ratio: 375 / 512,
+    unlock: { type: "default" },
+    blurb: "The one and only.",
+    blurbZh: "原汁原味，最經典。",
+  },
+  {
+    id: "scarf",
+    name: "Cozy Scarf",
+    nameZh: "冬日頸巾",
+    src: "/pet/outfit-scarf.png",
+    ratio: 470 / 512,
+    unlock: { type: "shop", cost: 80 },
+    blurb: "Knitted with love for chilly nights.",
+    blurbZh: "冷氣房必備，暖笠笠。",
+  },
+  {
+    id: "eco",
+    name: "Eco Master",
+    nameZh: "節能大師",
+    src: "/pet/outfit-eco.png",
+    ratio: 436 / 512,
+    unlock: { type: "stage", minLevel: 8 },
+    blurb: "A leaf haori for true energy savers.",
+    blurbZh: "專屬慳電達人嘅綠葉羽織。",
+  },
+  {
+    id: "aurora",
+    name: "Aurora Guardian",
+    nameZh: "極光守護神",
+    src: "/pet/outfit-aurora.png",
+    ratio: 432 / 512,
+    unlock: { type: "stage", minLevel: 12 },
+    blurb: "Crowned in northern light.",
+    blurbZh: "頭戴金冠，身披極光。",
+  },
+];
+
+export function outfitById(id: string): PetOutfit {
+  return petOutfits.find((o) => o.id === id) ?? petOutfits[0];
+}
+
+export function isOutfitUnlocked(
+  outfit: PetOutfit,
+  level: number,
+  owned: string[]
+): boolean {
+  if (outfit.unlock.type === "default") return true;
+  if (outfit.unlock.type === "stage") return level >= outfit.unlock.minLevel;
+  return owned.includes(outfit.id);
+}
 
 export function stageForLevel(level: number): PetStage {
   let current = petStages[0];

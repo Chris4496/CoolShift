@@ -1,9 +1,15 @@
 "use client";
 
 import React, { useCallback, useRef, useState } from "react";
+import Image from "next/image";
 import { Mascot } from "@/components/mascot";
 import { useApp } from "@/lib/store";
-import { levelFromXp, stageForLevel } from "@/lib/pet";
+import {
+  isOutfitUnlocked,
+  levelFromXp,
+  outfitById,
+  stageForLevel,
+} from "@/lib/pet";
 
 // ── The mascot dressed up as the user's pet ──────────────────────────────────
 // Level badge + evolution accessory (emoji) + aura for high stages.
@@ -18,10 +24,19 @@ export function PetFigure({
   priority?: boolean;
   showBadge?: boolean;
 }) {
-  const { petXp } = useApp();
+  const { petXp, currentOutfit, ownedOutfits } = useApp();
   const { level } = levelFromXp(petXp);
   const stage = stageForLevel(level);
   const accessorySize = Math.max(26, Math.round(height * 0.11));
+
+  // Equipped outfit (guarded: fall back to base if somehow not unlocked)
+  const equipped = outfitById(currentOutfit);
+  const outfit =
+    equipped.src && isOutfitUnlocked(equipped, level, ownedOutfits)
+      ? equipped
+      : null;
+  // Emoji accessory only as a placeholder for stages without real art yet
+  const emojiAccessory = outfit ? "" : stage.accessory;
 
   return (
     <div className="relative inline-block">
@@ -37,19 +52,31 @@ export function PetFigure({
           }}
         />
       )}
-      <Mascot
-        height={height}
-        float={float}
-        priority={priority}
-        className="relative z-10"
-      />
-      {stage.accessory && (
+      {outfit ? (
+        <Image
+          src={outfit.src!}
+          alt={`Snowie wearing ${outfit.name}`}
+          width={Math.round(height * outfit.ratio)}
+          height={height}
+          priority={priority}
+          draggable={false}
+          className={`relative z-10 select-none drop-shadow-sm ${float ? "mascot-float" : ""}`}
+        />
+      ) : (
+        <Mascot
+          height={height}
+          float={float}
+          priority={priority}
+          className="relative z-10"
+        />
+      )}
+      {emojiAccessory && (
         <span
           aria-hidden
           className="absolute left-1/2 z-20 -translate-x-1/2 drop-shadow-sm"
           style={{ top: -height * 0.015, fontSize: accessorySize }}
         >
-          {stage.accessory}
+          {emojiAccessory}
         </span>
       )}
       {showBadge && (
