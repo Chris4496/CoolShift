@@ -142,8 +142,8 @@ export default function PetPage() {
       </div>
 
       {/* Actions */}
-      <div className="mt-4 grid grid-cols-2 gap-2.5 px-5">
-        <div className="relative">
+      <div className="mt-4 grid grid-cols-1 gap-2.5 px-5 min-[320px]:grid-cols-2 min-[320px]:max-[359px]:gap-2">
+        <div className="relative min-w-0">
           <BurstLayer bursts={feed.bursts} />
           <button
             type="button"
@@ -152,13 +152,13 @@ export default function PetPage() {
               feed.spawn("🍬");
             }}
             disabled={petSnacks < 1}
-            className={`tap-target flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-[15px] font-semibold transition active:scale-[0.98] ${
+            className={`tap-target flex w-full min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border py-3.5 text-[15px] font-semibold transition active:scale-[0.98] min-[320px]:max-[359px]:gap-1.5 min-[320px]:max-[359px]:text-[13px] ${
               petSnacks >= 1
-                ? "bg-clp-blue text-white"
-                : "bg-neutral-300 text-neutral-500"
+                ? "border-transparent bg-clp-blue text-white"
+                : "border-transparent bg-neutral-300 text-neutral-500"
             }`}
           >
-            <Candy size={17} />
+            <Candy size={17} className="shrink-0" />
             {t(`Feed (+${XP_PER_FEED} XP)`, `餵食（+${XP_PER_FEED} 經驗）`)}
           </button>
         </div>
@@ -168,9 +168,9 @@ export default function PetPage() {
             patPet();
             pat.spawn();
           }}
-          className="tap-target flex w-full items-center justify-center gap-2 rounded-full border border-ink/15 bg-white py-3.5 text-[15px] font-semibold text-ink transition active:scale-[0.98]"
+          className="tap-target flex w-full min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-ink/15 bg-white py-3.5 text-[15px] font-semibold text-ink transition active:scale-[0.98] min-[320px]:max-[359px]:gap-1.5 min-[320px]:max-[359px]:text-[13px]"
         >
-          <Hand size={17} />
+          <Hand size={17} className="shrink-0" />
           {t("Pat pat", "摸頭頭")}
         </button>
       </div>
