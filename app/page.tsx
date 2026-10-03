@@ -123,7 +123,7 @@ export default function HomePage() {
       </div>
 
       {/* Quick actions */}
-      <div className="mt-5 grid grid-cols-4 gap-2.5 px-5">
+      <div className="mt-4 grid grid-cols-4 gap-2.5 px-5">
         {quickActions.map((a, i) => (
           <Link
             key={a.href}

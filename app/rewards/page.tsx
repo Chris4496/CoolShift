@@ -88,7 +88,7 @@ export default function RewardsPage() {
 
       {/* Points hero */}
       <div className="px-5">
-        <Card dark className="mt-3 flex items-center justify-between p-5">
+        <Card dark className="mt-4 flex items-center justify-between p-5">
           <div>
             <div className="text-[40px] font-bold leading-none">{points}</div>
             <div className="mt-1 text-[13px] text-white/60">{t("points available", "可用積分")}</div>

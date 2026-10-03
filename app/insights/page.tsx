@@ -33,7 +33,7 @@ export default function InsightsPage() {
   return (
     <Shell>
       <header className="px-5 pb-1 pt-6">
-        <Link href="/" className="mb-1 inline-block text-[13px] font-medium text-mute">
+        <Link href="/" className="mb-2 inline-block text-[13px] font-medium text-mute">
           {t("‹ Your energy", "‹ 你的用電")}
         </Link>
         <h1 className="text-[26px] font-bold tracking-tight">
@@ -53,7 +53,7 @@ export default function InsightsPage() {
       </div>
 
       {/* Hourly chart */}
-      <div className="mt-5 px-5">
+      <div className="mt-4 px-5">
         <Card className="p-4">
           <HourlyChart data={hourlyUsageYesterday} />
           <div className="mt-3 flex items-center justify-between rounded-2xl bg-paper px-4 py-3">
