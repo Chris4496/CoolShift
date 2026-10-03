@@ -10,6 +10,14 @@ import React, {
 } from "react";
 import { greenFunds, missions, partnerOffers, profile } from "./data";
 import { localize, translator, type Lang, type Translate } from "./i18n";
+import {
+  XP_PER_FEED,
+  XP_PER_PAT,
+  PAT_COOLDOWN_MS,
+  STARTING_SNACKS,
+  levelFromXp,
+  stageForLevel,
+} from "./pet";
 
 export interface Investment {
   fundId: string;
@@ -28,6 +36,12 @@ export interface AppState {
   planApplied: boolean;
   chargeScheduled: boolean;
   joinedChallenge: boolean;
+  // ── Mascot raising game ──
+  petSnacks: number; // "Frosty" tokens, minted 1:1 with every point earned
+  petXp: number;
+  petFeeds: number;
+  lastFedAt: number | null;
+  lastPatAt: number | null;
 }
 
 interface AppContextValue extends AppState {
@@ -42,6 +56,8 @@ interface AppContextValue extends AppState {
   applyPlan: () => void;
   confirmCharge: () => void;
   joinChallenge: () => void;
+  feedPet: () => void;
+  patPet: () => void;
 }
 
 const initialState: AppState = {
@@ -56,6 +72,11 @@ const initialState: AppState = {
   planApplied: false,
   chargeScheduled: false,
   joinedChallenge: false,
+  petSnacks: STARTING_SNACKS,
+  petXp: 0,
+  petFeeds: 0,
+  lastFedAt: null,
+  lastPatAt: null,
 };
 
 const STORAGE_KEY = "coolshift-v1";
@@ -110,8 +131,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     (n: number, reason?: string) => {
       setState((s) => {
         const t = translator(s.lang);
-        setTimeout(() => toast(t(`+${n} points`, `+${n} 積分`) + (reason ? ` — ${reason}` : "")), 0);
-        return { ...s, points: s.points + n };
+        // Every point earned mints one companion "Frosty" snack token 🍬
+        setTimeout(
+          () =>
+            toast(
+              t(`+${n} points · +${n} Frosties 🍬`, `+${n} 積分 · +${n} 涼涼果 🍬`) +
+                (reason ? ` — ${reason}` : "")
+            ),
+          0
+        );
+        return { ...s, points: s.points + n, petSnacks: s.petSnacks + n };
       });
     },
     [toast]
@@ -145,6 +174,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             ? [...s.completedMissions, id]
             : s.completedMissions,
           points: done ? s.points + mission.points : s.points,
+          // Mission rewards mint companion Frosties too
+          petSnacks: done ? s.petSnacks + mission.points : s.petSnacks,
         };
       });
       // Toast outside setState for latest value
@@ -244,9 +275,69 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         () => toast(t("Tonight’s plan applied — +20 points when you complete it.", "已套用今晚計劃 — 完成後 +20 積分。")),
         0
       );
-      return { ...s, planApplied: true, points: s.points + 20 };
+      return {
+        ...s,
+        planApplied: true,
+        points: s.points + 20,
+        petSnacks: s.petSnacks + 20,
+      };
     });
   }, [toast]);
+
+  // ── Mascot raising game actions ──────────────────────────────────────────
+
+  // Spend 1 Frosty → +XP, with a level-up celebration toast
+  const feedPet = useCallback(() => {
+    setState((s) => {
+      const t = translator(s.lang);
+      if (s.petSnacks < 1) {
+        setTimeout(
+          () =>
+            toast(
+              t(
+                "No Frosties left — earn points from missions & plans to get more!",
+                "涼涼果用完啦 — 做任務、慳電賺積分就有更多！"
+              )
+            ),
+          0
+        );
+        return s;
+      }
+      const xp = s.petXp + XP_PER_FEED;
+      const before = stageForLevel(levelFromXp(s.petXp).level);
+      const afterLvl = levelFromXp(xp).level;
+      const after = stageForLevel(afterLvl);
+      setTimeout(() => {
+        if (after.minLevel > before.minLevel)
+          toast(
+            t(
+              `✨ Evolution! Snowie became ${after.name} ${after.accessory}`,
+              `✨ 進化啦！雪寶變成${after.nameZh} ${after.accessory}`
+            )
+          );
+        else if (afterLvl > levelFromXp(s.petXp).level)
+          toast(t(`Level up! Snowie is now Lv ${afterLvl} 🎉`, `升級啦！雪寶升到 Lv ${afterLvl} 🎉`));
+        else
+          toast(t(`Yum yum! +${XP_PER_FEED} XP`, `好味好味！+${XP_PER_FEED} 經驗`));
+      }, 0);
+      return {
+        ...s,
+        petSnacks: s.petSnacks - 1,
+        petXp: xp,
+        petFeeds: s.petFeeds + 1,
+        lastFedAt: Date.now(),
+      };
+    });
+  }, [toast]);
+
+  // Free affection on a short cooldown — tiny XP so tapping feels rewarding
+  const patPet = useCallback(() => {
+    setState((s) => {
+      const now = Date.now();
+      if (s.lastPatAt && now - s.lastPatAt < PAT_COOLDOWN_MS) return s;
+      return { ...s, petXp: s.petXp + XP_PER_PAT, lastPatAt: now };
+    });
+  }, []);
 
   const confirmCharge = useCallback(() => {
     setState((s) => {
@@ -285,6 +376,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     applyPlan,
     confirmCharge,
     joinChallenge,
+    feedPet,
+    patPet,
   };
 
   return (

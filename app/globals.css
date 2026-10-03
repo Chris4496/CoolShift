@@ -108,6 +108,46 @@ body {
   }
 }
 
+/* Pet interaction burst (hearts / snacks float up and fade) */
+@keyframes burst-float {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 8px) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -72px) scale(1.15);
+  }
+}
+.burst-float {
+  animation: burst-float 0.95s ease-out both;
+}
+
+/* Soft pulsing aura behind high-stage pets */
+@keyframes pet-aura {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+}
+.pet-aura {
+  animation: pet-aura 3.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .burst-float,
+  .pet-aura {
+    animation: none;
+  }
+}
+
 /* Toast */
 @keyframes toast-in {
   from {

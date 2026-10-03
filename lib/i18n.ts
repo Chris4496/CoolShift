@@ -92,10 +92,10 @@ export const homeStrings: Record<Lang, HomeStrings> = {
 
 export const navStrings: Record<
   Lang,
-  { home: string; insights: string; ask: string; rewards: string }
+  { home: string; insights: string; pet: string; ask: string; rewards: string }
 > = {
-  en: { home: "Home", insights: "Insights", ask: "Ask", rewards: "Rewards" },
-  zh: { home: "主頁", insights: "用電分析", ask: "問一問", rewards: "獎賞" },
+  en: { home: "Home", insights: "Insights", pet: "Snowie", ask: "Ask", rewards: "Rewards" },
+  zh: { home: "主頁", insights: "用電分析", pet: "雪寶", ask: "問一問", rewards: "獎賞" },
 };
 
 export const topBarStrings: Record<

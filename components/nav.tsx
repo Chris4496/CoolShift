@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Gift, Home, MessageCircle, Type } from "lucide-react";
+import { BarChart3, Gift, Home, MessageCircle, PawPrint, Type } from "lucide-react";
 import { Mascot } from "@/components/mascot";
 import { useApp, useT } from "@/lib/store";
 import { navStrings, topBarStrings } from "@/lib/i18n";
@@ -11,6 +11,7 @@ import { navStrings, topBarStrings } from "@/lib/i18n";
 const tabs = [
   { href: "/", key: "home" as const, icon: Home },
   { href: "/insights", key: "insights" as const, icon: BarChart3 },
+  { href: "/pet", key: "pet" as const, icon: PawPrint },
   { href: "/ask", key: "ask" as const, icon: MessageCircle },
   { href: "/rewards", key: "rewards" as const, icon: Gift },
 ];
@@ -32,7 +33,7 @@ export function BottomNav() {
               <Link
                 key={tab.href}
                 href={tab.href}
-                className={`tap-target flex w-16 flex-col items-center gap-0.5 py-1.5 ${
+                className={`tap-target flex flex-1 flex-col items-center gap-0.5 py-1.5 ${
                   active ? "text-clp-blue" : "text-mute"
                 }`}
               >

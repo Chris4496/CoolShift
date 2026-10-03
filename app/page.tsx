@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   BatteryCharging,
   Building2,
+  Candy,
   Car,
   ChevronRight,
   Droplets,
@@ -16,7 +17,7 @@ import {
 } from "lucide-react";
 import { Card, Footnote, SectionTitle } from "@/components/ui";
 import { Shell, TopBar, BottomNav } from "@/components/nav";
-import { Mascot } from "@/components/mascot";
+import { BurstLayer, PetFigure, useBursts } from "@/components/pet";
 import { useApp } from "@/lib/store";
 import { profile, weather } from "@/lib/data";
 import { budgetStatus, dailyTips } from "@/lib/engine";
@@ -36,12 +37,13 @@ const quickActions = [
 ];
 
 export default function HomePage() {
-  const { budget, lang } = useApp();
+  const { budget, lang, petSnacks, patPet } = useApp();
   const tips = dailyTips(lang);
   const [tipIndex, setTipIndex] = useState(0);
   const tip = tips[tipIndex];
   const b = budgetStatus(budget);
   const tr = homeStrings[lang];
+  const hearts = useBursts();
 
   return (
     <Shell>
@@ -61,6 +63,10 @@ export default function HomePage() {
           <span className="flex items-center gap-1.5 text-mute">
             <Droplets size={15} /> {tr.humidity(weather.humidity)}
           </span>
+          <span className="h-4 w-px bg-hairline" />
+          <Link href="/pet" className="flex items-center gap-1.5 text-clp-blue">
+            <Candy size={15} /> {petSnacks}
+          </Link>
         </div>
       </div>
 
@@ -107,13 +113,32 @@ export default function HomePage() {
 
         <button
           type="button"
-          onClick={() => setTipIndex((i) => (i + 1) % tips.length)}
+          onClick={() => {
+            setTipIndex((i) => (i + 1) % tips.length);
+            patPet();
+            hearts.spawn();
+          }}
           aria-label={tr.tipsHint}
-          className="-mt-8 flex flex-col items-center self-center transition active:scale-95"
+          className="relative -mt-8 flex flex-col items-center self-center transition active:scale-95"
         >
-          <Mascot height={310} float priority />
+          <BurstLayer bursts={hearts.bursts} />
+          <PetFigure height={310} priority />
           <div className="mascot-shadow -mt-6 h-4 w-36 rounded-full bg-ink/15 blur-[4px]" />
         </button>
+
+        {/* Raising-game entry: token balance + feed CTA */}
+        <Link
+          href="/pet"
+          className="mx-auto mt-3 flex items-center gap-2 rounded-full border border-hairline bg-white px-4 py-2 text-[12.5px] font-semibold shadow-soft transition active:scale-[0.97]"
+        >
+          <Candy size={14} className="text-clp-blue" />
+          {lang === "zh"
+            ? `雪寶 · ${petSnacks} 粒涼涼果`
+            : `Snowie · ${petSnacks} Frosties`}
+          <span className="text-clp-blue">
+            {lang === "zh" ? "去餵食 ›" : "Feed me ›"}
+          </span>
+        </Link>
       </div>
 
       {/* Quick actions */}
