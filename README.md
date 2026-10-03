@@ -1,39 +1,65 @@
-# Cool Shift · CLP concept demo
+# ⚡ Cool Shift · Powered by CLP
 
-An installable React PWA showing how CLP could connect smart-meter insights, daily tips, missions, local partner rewards and community saving into one customer journey. All data is illustrative; nothing connects to real meters.
+**Small actions. Everyday value.**
+A hackathon MVP for CLP: a personal AI energy assistant for Hong Kong households.
+Branded in CLP blue / navy / orange with the ⚡ lockup and “Powered by CLP” endorsement.
 
-## Run
+## Quick start
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173 (also exposed on your LAN for phones)
-npm run build      # production build with service worker
-npm run preview    # serve the build at http://localhost:4173
+npm run dev
+# open http://localhost:3000        → the app (renders as a phone, max-width 430px)
+# open http://localhost:3000/pitch  → the pitch deck (12 slides, ← → keys)
 ```
 
-To install on a phone, open the preview URL over HTTPS (for example via a tunnel or any static host such as Vercel or Netlify) and choose "Add to Home Screen" / "Install app".
+Production check: `npm run build` (passes clean, fully static).
 
-## What's in the demo
+## What's inside
 
-| Tab / screen | Shows |
-| --- | --- |
-| Onboarding | Watt-son (節能仔) intro, language choice, 4-question home profile, opt-in consent |
-| Home | Weather and humidity, three daily tips with HKD ranges and points, smart AC-efficiency alert linked to a partner, impact (kWh, HKD, CO₂, trees), bill budget, caregiver card |
-| Insights | Hourly smart-meter chart with the 4–11 PM peak, 14-day view against temperature, appliance breakdown, energy profile against similar homes |
-| Bill explanation | Waterfall of why the bill rose, with "how this was calculated" |
-| Budget | Set a bi-monthly limit, daily allowance, alerts |
-| Ask | Watt-son chat (bill, cooling, EV, laundry, rewards, estate, invest, caregiver), plan cards, voice input in EN / 粵 / 普 |
-| Rewards | EcoPoints (100 pts = HK$10), weekly missions, earning rules, partner map and list across 4 tiers, vouchers with QR |
-| Green Growth | Invest points in illustrative clean-energy portfolios |
-| Estate | Building savings goal, fans funded for elderly neighbours, block challenge, neighbour cheers |
-| Caregiver | Elderly relative's home status and alerts |
-| CLP pilot dashboard | Pilot KPIs against control group, EV shift, cohorts, partner revenue, commission model, risks, roadmap |
+| Route | Feature | Brief area |
+|---|---|---|
+| `/` | Home — greeting, weather/humidity, 3 daily tips with HK$ savings | Energy insights |
+| `/insights` | Yesterday's kWh, hourly chart vs peak tariff, breakdown, bill explainer, budget pace, peer comparison | Energy insights |
+| `/ask` | Chat assistant — bill breakdown card, tonight's plan with "how this was calculated", **live mission/challenge check-ins** (reads real app state), quick chips, voice affordance | Energy insights / Dialogue |
+| `/cooling` | 25.5°C comfort-first plan, safety guardrails, transparent reasoning | Smart home |
+| `/charging` | **EV car infographic** (58 kWh sedan, cable + wallbox), target slider, off-peak schedule 11 PM–7 AM, per-charge saving | E-mobility |
+| `/budget` | Monthly budget slider, pace bar, 50/80/100% alerts, daily allowance | Inclusive journeys |
+| `/impact` | Personal impact, Block 7 community goal, anonymised leaderboard, group challenge | Social harmony |
+| `/rewards` | Points, missions with check-ins, partner offer map/list, redeem flow, **clean-energy point investing** | Partner platforms |
+| `/pitch` | 12-slide pitch deck (business value, pilot, risks, scale) | Presentation |
 
-Settings (tap the avatar) has language, large-text simple mode, home profile, consent and demo controls, including **Simulate Very Hot Weather Warning**, which pauses any tip that reduces cooling.
+## The five customer questions (acceptance criteria)
 
-## Design principles in code
+1. *Why is my bill increasing?* → `/insights` + `/ask` (HK$124 decomposed line-by-line)
+2. *When should I run appliances?* → 3 daily tips with exact times and tariff logic
+3. *How do I charge an EV off-peak?* → `/charging` (11 PM–7 AM, HK$16–18/charge)
+4. *Savings without losing comfort?* → comfort-first missions + hot-weather guardrails
+5. *Which action fits my home?* → personal profile drives every recommendation
 
-- Every HKD figure comes from `src/calc.js` (deterministic, pilot tariff). The chat only phrases those numbers.
-- Tips come from a reviewed library in `src/data.js`; `heatSafe: false` tips never show during heat warnings or for vulnerable households.
-- At most three tips a day.
-- Partner commission data is only shown in the CLP dashboard, never to customers.
+## Architecture
+
+```
+lib/data.ts     Mock layer: smart meter, TOU tariff, weather, bill, missions,
+                partners, green funds, building community — internally consistent
+lib/engine.ts   Deterministic rules engine: every HK$ figure is COMPUTED here.
+                This is the LLM integration point — the model explains, never invents.
+lib/store.tsx   Global state (points, budget, missions, portfolio, vouchers) +
+                localStorage persistence + toasts
+components/     Monochrome design system (cards, nav, SVG charts, faux Sha Tin map)
+app/            9 routes, mobile-first, 430px phone shell
+```
+
+**Purposeful AI principle:** savings are calculated from meter data and tariffs;
+the language layer only explains them. Success = kWh shifted & HK$ saved, not chat volume.
+
+## Docs
+
+- `docs/PROPOSAL.md` — full business proposal (problem, five questions, value, pilot, risks, scale)
+- `docs/PITCH.md` — slide-by-slide speaker notes + 2-minute live demo script
+
+## Reset demo state
+
+State persists in `localStorage` (`coolshift-v1`). Clear it in DevTools → Application → Local Storage to reset points/missions/budget.
+
+*All data is illustrative. Concept design for hackathon purposes.*
