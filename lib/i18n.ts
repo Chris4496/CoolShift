@@ -1,9 +1,24 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Cool Shift · UI strings (English / 繁體中文)
-// Currently wired into the front page, TopBar and BottomNav.
+// Page copy uses the inline `t(en, zh)` helper from `useT()`; data fixtures
+// carry a `zh` override block resolved with `localize()`.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type Lang = "en" | "zh";
+
+export type Translate = (en: string, zh: string) => string;
+
+export function translator(lang: Lang): Translate {
+  return (en, zh) => (lang === "zh" ? zh : en);
+}
+
+// Merge an item's `zh` overrides on top of its English fields
+export function localize<T extends { zh?: Partial<Omit<T, "zh">> }>(
+  item: T,
+  lang: Lang
+): T {
+  return lang === "zh" && item.zh ? { ...item, ...item.zh } : item;
+}
 
 export interface HomeStrings {
   greeting: (name: string) => string;
@@ -51,55 +66,33 @@ export const homeStrings: Record<Lang, HomeStrings> = {
   },
   zh: {
     greeting: (name) => `你好，${name}`,
-    tagline: "讓今天過得更舒適、更慳電。",
+    tagline: "今日都要涼得舒服、慳得輕鬆。",
     humidity: (n) => `濕度 ${n}%`,
-    quick: { cooling: "冷氣", ev: "充電", budget: "預算", impact: "社區" },
-    heroTitle: "舒適享受，用更少能源",
-    heroSubtitle: "你的建議設定 · 晚上 7:30 開始",
-    tipsTitle: "你的下一步",
+    quick: { cooling: "冷氣", ev: "電動車", budget: "預算", impact: "社區" },
+    heroTitle: "一樣涼快，用電更少",
+    heroSubtitle: "建議設定 · 晚上 7:30 開始",
+    tipsTitle: "下一步做咩好",
     seeAll: "查看全部",
     budgetTitle: "七月預算",
     manage: "管理",
-    budgetOf: (spent, budget) => `已用 HK$${spent}，預算 HK$${budget}`,
+    budgetOf: (spent, budget) => `已用 HK$${spent}／預算 HK$${budget}`,
     budgetOver: (projected, delta) =>
-      `預計 HK$${projected} — 超支約 HK$${delta}，立即調整`,
-    budgetOnTrack: (projected) => `進度良好 — 預計 HK$${projected}`,
-    blockTitle: "你的樓宇",
-    seeImpact: "查看影響",
+      `預計 HK$${projected}，超支約 HK$${delta}，一齊調整吓`,
+    budgetOnTrack: (projected) => `進度理想，預計 HK$${projected}`,
+    blockTitle: "你的大廈",
+    seeImpact: "查看成果",
     blockLine1: "第 7 座本月已轉移 412 度電",
-    blockLine2: "你在 86 戶中排名第 2 — 已節省 18.2 度電",
-    footnote: "概念示範 · 智能電錶、電價及合作夥伴數據僅供參考",
+    blockLine2: "你在 86 戶中排第 2 — 已轉移 18.2 度電",
+    footnote: "概念示範 · 智能電錶、電價及合作商戶數據僅作說明用途",
   },
 };
-
-// Tip text overrides keyed by tip id (numbers stay identical to the engine).
-export const tipStrings: Record<
-  Lang,
-  Record<string, { title: string; kwh: string }>
-> = {
-  en: {},
-  zh: {
-    cooling: { title: "晚上 7:30 為客廳開冷氣", kwh: "≈ 19 度電移離高峰時段" },
-    charging: {
-      title: "晚上 11 時後為電動車充電",
-      kwh: "≈ 每年 176 度電改用離峰電價",
-    },
-    habit: { title: "晚上 9 時後才開乾衣機", kwh: "≈ 每年轉移 33 度電" },
-  },
-};
-
-// Translate the suffix of an engine-generated savings string, e.g.
-// "HK$27–34 / month" → "HK$27–34/月"
-export function zhSavings(s: string): string {
-  return s.replace(" / month", "/月").replace(" per charge", " · 每次充電");
-}
 
 export const navStrings: Record<
   Lang,
   { home: string; insights: string; ask: string; rewards: string }
 > = {
   en: { home: "Home", insights: "Insights", ask: "Ask", rewards: "Rewards" },
-  zh: { home: "主頁", insights: "分析", ask: "問答", rewards: "獎賞" },
+  zh: { home: "主頁", insights: "用電分析", ask: "問一問", rewards: "獎賞" },
 };
 
 export const topBarStrings: Record<

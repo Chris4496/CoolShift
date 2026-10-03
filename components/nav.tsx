@@ -3,8 +3,9 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Gift, Home, MessageCircle, Type, Zap } from "lucide-react";
-import { useApp } from "@/lib/store";
+import { BarChart3, Gift, Home, MessageCircle, Type } from "lucide-react";
+import { Mascot } from "@/components/mascot";
+import { useApp, useT } from "@/lib/store";
 import { navStrings, topBarStrings } from "@/lib/i18n";
 
 const tabs = [
@@ -51,13 +52,7 @@ export function BottomNav() {
 export function Logo({ big = false }: { big?: boolean }) {
   return (
     <div className="flex items-center gap-2">
-      <div
-        className={`flex items-center justify-center rounded-xl bg-clp-blue text-white ${
-          big ? "h-10 w-10" : "h-8 w-8"
-        }`}
-      >
-        <Zap size={big ? 20 : 16} className="fill-white" />
-      </div>
+      <Mascot height={big ? 44 : 36} priority />
       <div className="leading-none">
         <div className={`font-bold tracking-tight ${big ? "text-[22px]" : "text-[17px]"}`}>
           Cool Shift
@@ -96,19 +91,6 @@ export function TopBar({
         >
           {tb.langButton}
         </button>
-        <button
-          type="button"
-          onClick={toggleSimpleMode}
-          title={tb.simpleTitle}
-          className={`tap-target flex items-center gap-1 rounded-full border px-3 py-1.5 text-[12px] font-semibold transition ${
-            simpleMode
-              ? "border-ink bg-ink text-white"
-              : "border-hairline bg-white text-ink"
-          }`}
-        >
-          <Type size={13} />
-          Aa
-        </button>
         {showAvatar && (
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ink text-[12px] font-bold text-white">
             AC
@@ -120,10 +102,11 @@ export function TopBar({
 }
 
 export function BackHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+  const t = useT();
   return (
     <header className="px-5 pb-1 pt-6">
       <Link href="/" className="mb-2 inline-flex items-center gap-1 text-[13px] font-medium text-mute">
-        ‹ Back
+        ‹ {t("Back", "返回")}
       </Link>
       <h1 className="text-[24px] font-bold tracking-tight">{title}</h1>
       {subtitle && <p className="mt-0.5 text-[13.5px] text-mute">{subtitle}</p>}

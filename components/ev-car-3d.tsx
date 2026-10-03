@@ -9,6 +9,7 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
+import { useT } from "@/lib/store";
 
 export function EvCar3D({
   chargePct,
@@ -17,6 +18,7 @@ export function EvCar3D({
   chargePct: number;
   targetPct: number;
 }) {
+  const t = useT();
   const mountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -196,7 +198,7 @@ export function EvCar3D({
         ref={mountRef}
         className="w-full overflow-hidden rounded-xl"
         role="img"
-        aria-label="3D model of a white electric car"
+        aria-label={t("3D model of a white electric car", "白色電動車 3D 模型")}
       />
       {/* Battery bar — HTML so it stays synced with the target slider */}
       <div className="relative mx-auto mt-1 h-2 w-[70%] rounded-full bg-[#e8f2fa]">
