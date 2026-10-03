@@ -18,7 +18,7 @@ import { Shell, TopBar, BottomNav } from "@/components/nav";
 import { useApp } from "@/lib/store";
 import { profile, weather } from "@/lib/data";
 import { budgetStatus, dailyTips } from "@/lib/engine";
-import { homeStrings, tipStrings, zhSavings } from "@/lib/i18n";
+import { homeStrings } from "@/lib/i18n";
 
 const tipIcons = {
   snowflake: <Snowflake size={17} />,
@@ -35,10 +35,9 @@ const quickActions = [
 
 export default function HomePage() {
   const { budget, lang } = useApp();
-  const tips = dailyTips();
+  const tips = dailyTips(lang);
   const b = budgetStatus(budget);
   const tr = homeStrings[lang];
-  const tipTr = tipStrings[lang];
 
   return (
     <Shell>
@@ -107,22 +106,15 @@ export default function HomePage() {
       <div className="px-5">
         <SectionTitle title={tr.tipsTitle} action={tr.seeAll} href="/insights" />
         <Card className="divide-y divide-hairline">
-          {tips.map((t) => {
-            const zh = tipTr[t.id];
-            return (
-              <Row
-                key={t.id}
-                href={t.href}
-                icon={tipIcons[t.icon]}
-                title={zh?.title ?? t.title}
-                subtitle={
-                  zh
-                    ? `${zhSavings(t.savings)} · ${zh.kwh}`
-                    : `${t.savings} · ${t.kwh}`
-                }
-              />
-            );
-          })}
+          {tips.map((t) => (
+            <Row
+              key={t.id}
+              href={t.href}
+              icon={tipIcons[t.icon]}
+              title={t.title}
+              subtitle={`${t.savings} · ${t.kwh}`}
+            />
+          ))}
         </Card>
       </div>
 

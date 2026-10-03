@@ -2,9 +2,11 @@
 
 import React from "react";
 import { tariffAt } from "@/lib/data";
+import { useT } from "@/lib/store";
 
 // ── Hourly usage chart — peak-band bars highlighted dark ─────────────────────
 export function HourlyChart({ data }: { data: number[] }) {
+  const t = useT();
   const max = Math.max(...data);
   return (
     <div>
@@ -14,7 +16,7 @@ export function HourlyChart({ data }: { data: number[] }) {
           return (
             <div
               key={h}
-              title={`${h}:00 — ${v.toFixed(1)} kWh`}
+              title={t(`${h}:00 — ${v.toFixed(1)} kWh`, `${h}:00 — ${v.toFixed(1)} 度`)}
               className={`flex-1 rounded-full ${peak ? "bg-clp-orange" : "bg-clp-sky"}`}
               style={{ height: `${Math.max(8, (v / max) * 100)}%` }}
             />
@@ -22,10 +24,10 @@ export function HourlyChart({ data }: { data: number[] }) {
         })}
       </div>
       <div className="mt-2 flex justify-between text-[10.5px] font-medium text-mute">
-        <span>6 AM</span>
-        <span>12 PM</span>
-        <span>6 PM</span>
-        <span>12 AM</span>
+        <span>{t("6 AM", "上午 6 時")}</span>
+        <span>{t("12 PM", "中午 12 時")}</span>
+        <span>{t("6 PM", "下午 6 時")}</span>
+        <span>{t("12 AM", "午夜 12 時")}</span>
       </div>
     </div>
   );
@@ -71,6 +73,7 @@ export function PaceBar({
   spentPct: number;
   expectedPct: number;
 }) {
+  const t = useT();
   return (
     <div className="relative pt-1">
       <div className="h-2.5 w-full overflow-hidden rounded-full bg-neutral-200">
@@ -87,8 +90,8 @@ export function PaceBar({
         style={{ left: `${Math.min(100, expectedPct)}%` }}
       />
       <div className="mt-1.5 flex justify-between text-[11px] text-mute">
-        <span>Spent {spentPct}%</span>
-        <span>Expected pace {expectedPct}%</span>
+        <span>{t(`Spent ${spentPct}%`, `已用 ${spentPct}%`)}</span>
+        <span>{t(`Expected pace ${expectedPct}%`, `應有進度 ${expectedPct}%`)}</span>
       </div>
     </div>
   );
@@ -100,15 +103,16 @@ export function FauxMap({
 }: {
   pins: { id: string; x: number; y: number; label?: string; icon?: React.ReactNode }[];
 }) {
+  const t = useT();
   return (
     <div className="relative h-64 w-full overflow-hidden rounded-card border border-hairline bg-[#eef0ec]">
       <svg viewBox="0 0 400 300" className="absolute inset-0 h-full w-full" aria-hidden>
         {/* park */}
         <ellipse cx="250" cy="70" rx="80" ry="45" fill="#dde8dc" />
-        <text x="238" y="72" fontSize="9" fill="#9db49b">Sha Tin Park</text>
+        <text x="238" y="72" fontSize="9" fill="#9db49b">{t("Sha Tin Park", "沙田公園")}</text>
         {/* river */}
         <path d="M 20 300 C 80 220, 60 150, 130 60 C 150 35, 180 10, 210 0" fill="none" stroke="#c8d9e6" strokeWidth="16" />
-        <text x="42" y="215" fontSize="8" fill="#a8bfd0" transform="rotate(-64 60 190)">Shing Mun River</text>
+        <text x="42" y="215" fontSize="8" fill="#a8bfd0" transform="rotate(-64 60 190)">{t("Shing Mun River", "城門河")}</text>
         {/* street grid */}
         <g stroke="#e2e4df" strokeWidth="6">
           <path d="M 0 120 L 400 100" />
@@ -126,8 +130,8 @@ export function FauxMap({
           <rect x="30" y="250" width="70" height="35" rx="4" />
           <rect x="260" y="200" width="50" height="30" rx="4" />
         </g>
-        <text x="168" y="152" fontSize="8.5" fill="#8f938c">Sha Tin</text>
-        <text x="278" y="262" fontSize="8" fill="#8f938c">Sha Tin Station</text>
+        <text x="168" y="152" fontSize="8.5" fill="#8f938c">{t("Sha Tin", "沙田")}</text>
+        <text x="278" y="262" fontSize="8" fill="#8f938c">{t("Sha Tin Station", "沙田站")}</text>
       </svg>
       {/* you-are-here dot */}
       <div className="absolute" style={{ left: "58%", top: "52%" }}>
