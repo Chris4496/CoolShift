@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   BatteryCharging,
   Building2,
-  Candy,
   Car,
   ChevronRight,
   Droplets,
@@ -37,7 +36,7 @@ const quickActions = [
 ];
 
 export default function HomePage() {
-  const { budget, lang, petSnacks, patPet } = useApp();
+  const { budget, lang, patPet } = useApp();
   const tips = dailyTips(lang);
   const [tipIndex, setTipIndex] = useState(0);
   const tip = tips[tipIndex];
@@ -63,10 +62,6 @@ export default function HomePage() {
           <span className="flex items-center gap-1.5 text-mute">
             <Droplets size={15} /> {tr.humidity(weather.humidity)}
           </span>
-          <span className="h-4 w-px bg-hairline" />
-          <Link href="/pet" className="flex items-center gap-1.5 text-clp-blue">
-            <Candy size={15} /> {petSnacks}
-          </Link>
         </div>
       </div>
 
@@ -125,20 +120,6 @@ export default function HomePage() {
           <PetFigure height={310} priority />
           <div className="mascot-shadow -mt-10 h-14 w-40 rounded-full bg-[radial-gradient(ellipse,rgba(17,17,16,0.3)_0%,rgba(17,17,16,0.12)_50%,transparent_72%)]" />
         </button>
-
-        {/* Raising-game entry: token balance + feed CTA */}
-        <Link
-          href="/pet"
-          className="mx-auto mt-3 flex items-center gap-2 rounded-full border border-hairline bg-white px-4 py-2 text-[12.5px] font-semibold shadow-soft transition active:scale-[0.97]"
-        >
-          <Candy size={14} className="text-clp-blue" />
-          {lang === "zh"
-            ? `節能仔 · ${petSnacks} 粒涼涼果`
-            : `Watt-son · ${petSnacks} Frosties`}
-          <span className="text-clp-blue">
-            {lang === "zh" ? "去餵食 ›" : "Feed me ›"}
-          </span>
-        </Link>
       </div>
 
       {/* Quick actions */}
