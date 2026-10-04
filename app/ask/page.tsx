@@ -57,6 +57,7 @@ export default function AskPage() {
     missionProgress,
     completedMissions,
     lang,
+    simpleMode,
   } = useApp();
   const t = useT();
 
@@ -115,7 +116,7 @@ export default function AskPage() {
   const offer = localize(partnerOffers[0], lang);
 
   return (
-    <Shell className="flex h-dvh flex-col overflow-hidden !pb-[68.75px]">
+    <Shell className={`flex h-dvh flex-col overflow-hidden ${simpleMode ? "!pb-[84px]" : "!pb-[68.75px]"}`}>
       {/* Header */}
       <header className="flex shrink-0 items-center gap-3 px-5 pb-3 pt-6">
         <Mascot height={56} float priority />
