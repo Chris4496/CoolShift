@@ -223,11 +223,14 @@ export default function RewardsPage() {
               "將任務積分投資到清潔能源投資組合"
             )}
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-[30px] font-bold leading-none">
-              {t(`${investedTotal} pts`, `${investedTotal} 分`)}
-            </span>
-            <span className="text-[12.5px] text-white/60">
+          <div className="mt-3 flex items-end gap-3">
+            <div className="flex shrink-0 items-baseline gap-1.5 whitespace-nowrap">
+              <span className="text-[30px] font-bold leading-none">{investedTotal}</span>
+              <span className="text-[16px] font-semibold leading-none">
+                {t("pts", "分")}
+              </span>
+            </div>
+            <span className="min-w-0 text-[12.5px] leading-snug text-white/60">
               {t(
                 `invested · ≈ HK$${investedHkd} illustrative value`,
                 `已投資 · 示意價值約 HK$${investedHkd}`
