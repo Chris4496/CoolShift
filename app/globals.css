@@ -26,8 +26,11 @@ body {
   zoom: 1.18;
   max-width: calc(min(430px, 100vw) / 1.18);
 }
-.simple-mode .tap-target {
-  min-height: 56px;
+/* Viewport-locked pages (Ask uses h-dvh): shrink the CSS height by the
+   zoom factor so the zoomed layout still fits the screen exactly. */
+.simple-mode .max-w-phone.h-dvh {
+  height: calc(100dvh / 1.18);
+  min-height: 0;
 }
 
 /* Hide scrollbars on horizontal chip rows */
