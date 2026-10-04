@@ -18,9 +18,13 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Inclusive "simple mode": larger type and roomier tap targets */
-.simple-mode {
-  font-size: 118%;
+/* Inclusive "simple mode": enlarge the whole phone column.
+   The app sizes text in fixed px, so a plain font-size % does nothing;
+   zoom scales everything. max-width is divided by the zoom factor so the
+   rendered column keeps the same on-screen width (no sideways scroll). */
+.simple-mode .max-w-phone {
+  zoom: 1.18;
+  max-width: calc(min(430px, 100vw) / 1.18);
 }
 .simple-mode .tap-target {
   min-height: 56px;
