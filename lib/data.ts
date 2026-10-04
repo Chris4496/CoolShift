@@ -219,7 +219,7 @@ export interface PartnerOffer {
   category: OfferCategory;
   points: number;
   distanceM: number;
-  pin: { x: number; y: number }; // position on the illustrative map (%)
+  coords: { lat: number; lng: number }; // real location, shown on the map
   blurb: string;
   zh?: Partial<Pick<PartnerOffer, "partner" | "title" | "blurb">>;
 }
@@ -231,6 +231,9 @@ export const categoryLabelsZh: Record<OfferCategory, string> = {
   Experiences: "文化體驗",
 };
 
+// Where "you" live in the demo — Block 7, Sha Tin. Drives the map's blue dot.
+export const homeLocation = { lat: 22.38150, lng: 114.18790 };
+
 export const partnerOffers: PartnerOffer[] = [
   {
     id: "cafe-voucher",
@@ -239,7 +242,7 @@ export const partnerOffers: PartnerOffer[] = [
     category: "Food & Coffee",
     points: 120,
     distanceM: 350,
-    pin: { x: 52, y: 38 },
+    coords: { lat: 22.38447, lng: 114.18906 },
     blurb: "Redeem for any hand-drip or espresso drink. Partner-funded offer.",
     zh: { partner: "街坊咖啡店", title: "HK$20 咖啡券", blurb: "可換購任何手沖或意式咖啡。優惠由合作商戶提供。" },
   },
@@ -250,7 +253,7 @@ export const partnerOffers: PartnerOffer[] = [
     category: "Charging",
     points: 200,
     distanceM: 500,
-    pin: { x: 76, y: 30 },
+    coords: { lat: 22.38071, lng: 114.19268 },
     blurb: "Off-peak charging credit at any ChargeHK station in Sha Tin.",
     zh: { partner: "ChargeHK", title: "HK$30 充電額", blurb: "可於沙田任何 ChargeHK 充電站在非繁忙時段使用。" },
   },
@@ -261,21 +264,10 @@ export const partnerOffers: PartnerOffer[] = [
     category: "Home Services",
     points: 450,
     distanceM: 900,
-    pin: { x: 30, y: 66 },
+    coords: { lat: 22.37627, lng: 114.18120 },
     blurb:
       "Triggered because your unit’s estimated efficiency dropped ~8%. A clean unit uses up to 15% less energy.",
     zh: { partner: "CoolCare 冷氣服務", title: "冷氣深層清洗減 HK$150", blurb: "因為你的冷氣機估計效能下降約 8%。清潔過的冷氣機最多可慳 15% 電。" },
-  },
-  {
-    id: "ebike-swap",
-    partner: " Volt Bikes",
-    title: "Free e-bike battery swap ×2",
-    category: "Charging",
-    points: 150,
-    distanceM: 650,
-    pin: { x: 20, y: 42 },
-    blurb: "Swap and go at the kiosk near Sha Tin Station.",
-    zh: { partner: "Volt Bikes", title: "免費電動單車換電 ×2", blurb: "到沙田站附近的換電站，即換即走。" },
   },
   {
     id: "bakery",
@@ -284,7 +276,7 @@ export const partnerOffers: PartnerOffer[] = [
     category: "Food & Coffee",
     points: 90,
     distanceM: 120,
-    pin: { x: 62, y: 58 },
+    coords: { lat: 22.38174, lng: 114.18934 },
     blurb: "Fresh pineapple buns, two blocks from home.",
     zh: { partner: "第 7 座餅店", title: "HK$15 餅店券", blurb: "新鮮出爐菠蘿包，離家只隔兩座。" },
   },
@@ -295,7 +287,7 @@ export const partnerOffers: PartnerOffer[] = [
     category: "Experiences",
     points: 180,
     distanceM: 1100,
-    pin: { x: 44, y: 78 },
+    coords: { lat: 22.37159, lng: 114.18883 },
     blurb: "Community event tickets — part of CLP’s neighbourhood programme.",
     zh: { partner: "沙田文化館", title: "週末展覽門票 ×2", blurb: "社區活動門票 — 中電社區計劃的一部分。" },
   },
@@ -306,7 +298,7 @@ export const partnerOffers: PartnerOffer[] = [
     category: "Home Services",
     points: 300,
     distanceM: 0,
-    pin: { x: 68, y: 76 },
+    coords: { lat: 22.38201, lng: 114.18655 },
     blurb:
       "A 30-minute visit from your estate team: seals, filters and water-heater timer setup.",
     zh: { partner: "屋苑物業管理處", title: "家居節能檢查", blurb: "屋苑團隊上門 30 分鐘：檢查門窗密封、隔塵網及設定熱水爐定時器。" },

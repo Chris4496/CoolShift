@@ -1,3 +1,4 @@
+@import "leaflet/dist/leaflet.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -183,4 +184,71 @@ body {
 }
 .slide-in {
   animation: slide-in 0.3s ease-out both;
+}
+
+/* ── Partner map (Leaflet) ───────────────────────────────────────────────── */
+.leaflet-container {
+  font-family: inherit;
+  background: #eef0ec;
+}
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.72);
+  font-size: 9px;
+  color: #8f938c;
+}
+.leaflet-control-attribution a {
+  color: #8f938c;
+}
+
+/* Teardrop marker with a category glyph; the points pill shows when selected */
+.map-marker {
+  position: relative;
+  width: 32px;
+  height: 45px;
+  cursor: pointer;
+}
+.map-marker__drop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 32px;
+  height: 45px;
+  fill: #111110;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+  transition: fill 0.15s ease;
+}
+.map-marker__glyph {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 16px;
+  height: 16px;
+  color: #fff;
+}
+.map-marker.is-selected .map-marker__drop {
+  fill: #0057a8;
+}
+.map-marker__callout {
+  position: absolute;
+  left: 50%;
+  bottom: 49px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  border-radius: 999px;
+  background: #111110;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.26);
+}
+
+/* "You are here" */
+.map-home {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  background: #3b82f6;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
 }

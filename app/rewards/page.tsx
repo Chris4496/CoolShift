@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import Image from "next/image";
 import {
   Award,
+  ChevronRight,
   Coffee,
   Gift,
   Leaf,
@@ -16,7 +18,7 @@ import {
 } from "lucide-react";
 import { Card, Chip, Footnote, ProgressBar, SectionTitle } from "@/components/ui";
 import { Shell, BottomNav, Logo } from "@/components/nav";
-import { FauxMap } from "@/components/charts";
+import { PartnerMap } from "@/components/partner-map";
 import { useApp, useT } from "@/lib/store";
 import { localize } from "@/lib/i18n";
 import {
@@ -35,6 +37,11 @@ const categories: (OfferCategory | "All")[] = [
   "Home Services",
   "Experiences",
 ];
+
+const catArt: Record<string, string> = {
+  "Food & Coffee": "/art/coffee.webp",
+  Charging: "/art/charger.webp",
+};
 
 const catIcon = (c: string) =>
   c === "Food & Coffee" ? <Coffee size={13} /> :
@@ -58,10 +65,27 @@ export default function RewardsPage() {
   const t = useT();
   const [cat, setCat] = useState<(OfferCategory | "All")>("All");
   const [view, setView] = useState<"map" | "list">("map");
+  const [focusedId, setFocusedId] = useState<string | null>(null);
   const [investAmt, setInvestAmt] = useState(50);
   const [fundId, setFundId] = useState(greenFunds[0].id);
 
   const offers = partnerOffers.filter((o) => cat === "All" || o.category === cat);
+  // On the map view the first two offers are shown as large picture cards.
+  const featured = view === "map" ? offers.slice(0, 2) : [];
+  const rest = view === "map" ? offers.slice(2) : offers;
+  // Memoised: a new array each render would restart the map effect every time.
+  const mapPins = useMemo(
+    () =>
+      offers.map((o) => ({
+        id: o.id,
+        lat: o.coords.lat,
+        lng: o.coords.lng,
+        category: o.category,
+        label: lang === "zh" ? `${o.points} 分` : `${o.points} pts`,
+        selected: o.id === focusedId,
+      })),
+    [cat, focusedId, lang] // eslint-disable-line react-hooks/exhaustive-deps
+  );
   const weekMission = localize(missions[0], lang);
   const investedTotal = portfolio.reduce((a, p) => a + p.points, 0);
   const investedHkd = (investedTotal * POINTS_TO_HKD * 1.02).toFixed(1);
@@ -88,13 +112,19 @@ export default function RewardsPage() {
 
       {/* Points hero */}
       <div className="px-5">
-        <Card dark className="mt-4 flex items-center justify-between p-5">
-          <div>
+        <Card dark className="relative mt-4 aspect-[5/2] overflow-hidden p-5">
+          <Image
+            src="/art/points-hero.webp"
+            alt=""
+            fill
+            sizes="430px"
+            priority
+            className="select-none object-cover object-center"
+            draggable={false}
+          />
+          <div className="relative max-w-[60%]">
             <div className="text-[40px] font-bold leading-none">{points}</div>
             <div className="mt-1 text-[13px] text-white/60">{t("points available", "可用積分")}</div>
-          </div>
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
-            <Sparkles size={30} className="fill-white/20" />
           </div>
         </Card>
       </div>
@@ -302,26 +332,81 @@ export default function RewardsPage() {
         </div>
 
         {view === "map" && (
-          <FauxMap
-            pins={offers.map((o) => ({
-              id: o.id,
-              x: o.pin.x,
-              y: o.pin.y,
-              label: t(`${o.points} pts`, `${o.points} 分`),
-              icon: catIcon(o.category),
-            }))}
-          />
+          <PartnerMap pins={mapPins} onSelect={setFocusedId} />
+        )}
+
+        {view === "map" && featured.length > 0 && (
+          <div className="mt-3 grid grid-cols-2 gap-2.5">
+            {featured.map((offer) => {
+              const o = localize(offer, lang);
+              const owned = vouchers.includes(o.id);
+              const affordable = points >= o.points;
+              return (
+                <Card key={o.id} className="overflow-hidden p-0">
+                  <div className="flex h-[108px] items-center justify-center bg-paper">
+                    {catArt[o.category] ? (
+                      <Image
+                        src={catArt[o.category]}
+                        alt=""
+                        width={320}
+                        height={320}
+                        className="h-[96px] w-[96px] select-none object-contain mix-blend-multiply"
+                        draggable={false}
+                      />
+                    ) : (
+                      <span className="scale-[2.6] text-mute">{catIcon(o.category)}</span>
+                    )}
+                  </div>
+                  <div className="flex items-end justify-between gap-2 p-3.5">
+                    <div className="min-w-0">
+                      <div className="truncate text-[13px] font-semibold">{o.partner}</div>
+                      <div className="mt-0.5 text-[15px] font-bold leading-none">
+                        {o.points}
+                        <span className="ml-1 text-[12px] font-medium text-mute">
+                          {t("points", "積分")}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      disabled={owned || !affordable}
+                      onClick={() => redeemOffer(o.id)}
+                      aria-label={t(`Redeem ${o.partner}`, `兌換 ${o.partner}`)}
+                      className={`tap-target flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition ${
+                        owned || !affordable
+                          ? "bg-neutral-200 text-mute"
+                          : "bg-ink text-white active:scale-[0.97]"
+                      }`}
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
         )}
 
         <div className={`space-y-2.5 ${view === "map" ? "mt-3" : ""}`}>
-          {offers.map((offer) => {
+          {rest.map((offer) => {
             const o = localize(offer, lang);
             const owned = vouchers.includes(o.id);
             const affordable = points >= o.points;
             return (
               <Card key={o.id} className="flex items-center gap-3.5 p-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-paper">
-                  {catIcon(o.category)}
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-paper">
+                  {catArt[o.category] ? (
+                    <Image
+                      src={catArt[o.category]}
+                      alt=""
+                      width={120}
+                      height={120}
+                      className="h-11 w-11 select-none object-contain mix-blend-multiply"
+                      draggable={false}
+                    />
+                  ) : (
+                    catIcon(o.category)
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-[14.5px] font-semibold">{o.partner}</div>

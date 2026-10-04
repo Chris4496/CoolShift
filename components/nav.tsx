@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Gift, Home, MessageCircle, PawPrint, Type } from "lucide-react";
+import { BarChart3, Gift, Home, MessageCircle, PawPrint } from "lucide-react";
 import { Mascot } from "@/components/mascot";
 import { useApp, useT } from "@/lib/store";
 import { navStrings, topBarStrings } from "@/lib/i18n";
@@ -76,7 +76,7 @@ export function TopBar({
   title?: string;
   showAvatar?: boolean;
 }) {
-  const { simpleMode, toggleSimpleMode, lang, toggleLang } = useApp();
+  const { lang, toggleLang } = useApp();
   const tb = topBarStrings[lang];
   const initials =
     profile.name
@@ -94,20 +94,6 @@ export function TopBar({
         <Logo />
       )}
       <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={toggleSimpleMode}
-          title={tb.simpleTitle}
-          aria-label={tb.simpleTitle}
-          aria-pressed={simpleMode}
-          className={`tap-target flex h-8 w-8 items-center justify-center rounded-full border transition active:scale-95 ${
-            simpleMode
-              ? "border-transparent bg-ink text-white"
-              : "border-hairline bg-white text-ink"
-          }`}
-        >
-          <Type size={15} />
-        </button>
         <button
           type="button"
           onClick={toggleLang}
