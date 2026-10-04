@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   BatteryCharging,
@@ -143,21 +144,25 @@ export default function HomePage() {
       {/* Hero: suggested cooling setting */}
       <div className="px-5">
         <Link href="/cooling">
-          <Card dark className="mt-4 p-5">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-[15px] font-medium text-white/80">
-                  {tr.heroTitle}
-                </div>
-                <div className="mt-2 text-[44px] font-bold leading-none tracking-tight">
-                  25.5°C
-                </div>
-                <div className="mt-1.5 text-[13px] text-white/60">
-                  {tr.heroSubtitle}
-                </div>
+          <Card dark className="relative mt-4 flex aspect-[5/2] flex-col justify-center overflow-hidden p-5">
+            <Image
+              src="/art/cooling-hero.webp"
+              alt=""
+              fill
+              sizes="430px"
+              priority
+              className="select-none object-cover object-center"
+              draggable={false}
+            />
+            <div className="relative max-w-[50%]">
+              <div className="text-[15px] font-medium text-white/80">
+                {tr.heroTitle}
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10">
-                <Snowflake size={24} />
+              <div className="mt-2 text-[44px] font-bold leading-none tracking-tight">
+                25.5°C
+              </div>
+              <div className="mt-2 text-[12px] text-white/60">
+                {tr.heroSubtitle}
               </div>
             </div>
           </Card>

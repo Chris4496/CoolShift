@@ -8,7 +8,7 @@
 
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { useT } from "@/lib/store";
 
 export function EvCar3D({
@@ -38,6 +38,12 @@ export function EvCar3D({
 
     const scene = new THREE.Scene();
 
+    // Metallic car paint looks muddy without reflections, so give the scene a
+    // small procedural studio to reflect.
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    scene.environment = envRT.texture;
+
     const camera = new THREE.PerspectiveCamera(32, width / height, 0.1, 100);
     camera.position.set(4.4, 2.1, 5.4);
     camera.lookAt(0, 0.55, 0);
@@ -61,97 +67,76 @@ export function EvCar3D({
 
     // ── Materials ──────────────────────────────────────────────────────────
     const paint = new THREE.MeshStandardMaterial({
-      color: 0xf4f6f8, // white / silver
-      metalness: 0.85,
-      roughness: 0.25,
-    });
-    const glass = new THREE.MeshStandardMaterial({
-      color: 0x8fa9bd,
+      color: 0x3b4149, // graphite — reads against the white studio floor
       metalness: 0.9,
-      roughness: 0.12,
-    });
-    const tyre = new THREE.MeshStandardMaterial({
-      color: 0x1d1f24,
-      metalness: 0.3,
-      roughness: 0.7,
-    });
-    const alloy = new THREE.MeshStandardMaterial({
-      color: 0xd5dade,
-      metalness: 0.95,
-      roughness: 0.2,
-    });
-    const accent = new THREE.MeshStandardMaterial({
-      color: 0xf26522, // CLP orange — charge port + light strip
-      emissive: 0xf26522,
-      emissiveIntensity: 0.55,
+      roughness: 0.22,
+      envMapIntensity: 0.9,
     });
 
     // ── Car ────────────────────────────────────────────────────────────────
+    // Porsche 911 GT2 mesh, pre-converted from the source .obj to a flat
+    // Float32 buffer (positions + normals) so nothing has to be parsed here.
     const car = new THREE.Group();
-
-    // Lower body
-    const body = new THREE.Mesh(new RoundedBoxGeometry(3.3, 0.72, 1.5, 5, 0.24), paint);
-    body.position.y = 0.62;
-    body.castShadow = true;
-    car.add(body);
-
-    // Cabin / glasshouse
-    const cabin = new THREE.Mesh(new RoundedBoxGeometry(1.85, 0.6, 1.32, 5, 0.26), glass);
-    cabin.position.set(-0.18, 1.16, 0);
-    cabin.castShadow = true;
-    car.add(cabin);
-
-    // Roof cap (paint over glass top)
-    const roof = new THREE.Mesh(new RoundedBoxGeometry(1.5, 0.14, 1.2, 3, 0.06), paint);
-    roof.position.set(-0.18, 1.48, 0);
-    car.add(roof);
-
-    // Front light strip
-    const strip = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.09, 1.1), accent);
-    strip.position.set(1.66, 0.78, 0);
-    car.add(strip);
-
-    // Charge port (rear fender, driver side)
-    const port = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.05, 20), accent);
-    port.rotation.x = Math.PI / 2;
-    port.position.set(-1.15, 0.78, 0.76);
-    car.add(port);
-
-    // Wheels
-    const wheelGeo = new THREE.CylinderGeometry(0.36, 0.36, 0.28, 32);
-    wheelGeo.rotateX(Math.PI / 2);
-    const hubGeo = new THREE.CylinderGeometry(0.17, 0.17, 0.3, 24);
-    hubGeo.rotateX(Math.PI / 2);
-    const wheelPos: [number, number][] = [
-      [1.08, 0.78],
-      [1.08, -0.78],
-      [-1.08, 0.78],
-      [-1.08, -0.78],
-    ];
-    for (const [x, z] of wheelPos) {
-      const w = new THREE.Mesh(wheelGeo, tyre);
-      w.position.set(x, 0.36, z);
-      w.castShadow = true;
-      car.add(w);
-      const h = new THREE.Mesh(hubGeo, alloy);
-      h.position.set(x, 0.36, z);
-      car.add(h);
-    }
-
     car.rotation.y = -0.5;
     scene.add(car);
 
+    let disposed = false;
+
+    fetch("/models/porsche.bin")
+      .then((r) => {
+        if (!r.ok) throw new Error(`model ${r.status}`);
+        return r.arrayBuffer();
+      })
+      .then((buf) => {
+        if (disposed) return;
+        const count = new Uint32Array(buf, 0, 1)[0];
+        const positions = new Float32Array(buf, 4, count * 3);
+        const normals = new Float32Array(buf, 4 + count * 12, count * 3);
+
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+        geo.setAttribute("normal", new THREE.BufferAttribute(normals, 3));
+        geo.computeBoundingBox();
+
+        const box = geo.boundingBox!;
+        const size = new THREE.Vector3();
+        const centre = new THREE.Vector3();
+        box.getSize(size);
+        box.getCenter(centre);
+
+        // The source model runs nose-to-tail along Z; the scene expects X.
+        // Scale so the car is the same 3.3 units long the old one was.
+        const scale = 3.9 / size.z;
+
+        const mesh = new THREE.Mesh(geo, paint);
+        mesh.castShadow = true;
+        mesh.position.set(-centre.x, -box.min.y, -centre.z);
+
+        const holder = new THREE.Group();
+        holder.add(mesh);
+        holder.scale.setScalar(scale);
+        holder.rotation.y = Math.PI / 2;
+        car.add(holder);
+      })
+      .catch((err) => {
+        console.error("EvCar3D: could not load the car model", err);
+      });
+
     // ── Ground ─────────────────────────────────────────────────────────────
     const ground = new THREE.Mesh(
-      new THREE.CircleGeometry(3.4, 56),
-      new THREE.MeshStandardMaterial({ color: 0xeef0f2, roughness: 1 })
+      new THREE.CircleGeometry(2.9, 56),
+      new THREE.MeshStandardMaterial({
+        color: 0xeef0f2,
+        roughness: 1,
+        envMapIntensity: 0,
+      })
     );
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     scene.add(ground);
 
     const ring = new THREE.Mesh(
-      new THREE.RingGeometry(3.32, 3.4, 56),
+      new THREE.RingGeometry(2.82, 2.9, 56),
       new THREE.MeshBasicMaterial({ color: 0xe0e3e7 })
     );
     ring.rotation.x = -Math.PI / 2;
@@ -176,6 +161,7 @@ export function EvCar3D({
     window.addEventListener("resize", onResize);
 
     return () => {
+      disposed = true;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
       scene.traverse((obj) => {
@@ -185,6 +171,8 @@ export function EvCar3D({
           (Array.isArray(m) ? m : [m]).forEach((mat) => mat.dispose());
         }
       });
+      envRT.dispose();
+      pmrem.dispose();
       renderer.dispose();
       if (renderer.domElement.parentNode === mount) {
         mount.removeChild(renderer.domElement);

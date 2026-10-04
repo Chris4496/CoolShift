@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   AirVent,
@@ -21,7 +22,12 @@ import {
 } from "@/lib/data";
 import { budgetStatus, comparisonStat, peakShareYesterday } from "@/lib/engine";
 
-const breakdownIcons = [AirVent, PlugZap, Flame, Lightbulb];
+const breakdownArt = [
+  "/art/cooling.webp",
+  "/art/appliances.webp",
+  "/art/water.webp",
+  "/art/lighting.webp",
+];
 
 export default function InsightsPage() {
   const { budget } = useApp();
@@ -79,11 +85,17 @@ export default function InsightsPage() {
         <SectionTitle title={t("What used it", "邊樣用得最多")} />
         <div className="grid grid-cols-2 gap-2.5">
           {usageBreakdown.map((row, i) => {
-            const Icon = breakdownIcons[i];
             return (
               <Card key={row.label} className="p-4">
-                <Icon size={20} strokeWidth={1.8} className="text-mute" />
-                <div className="mt-3 text-[13px] font-medium text-mute">{t(row.label, row.labelZh)}</div>
+                <Image
+                  src={breakdownArt[i]}
+                  alt=""
+                  width={180}
+                  height={180}
+                  className="h-14 w-14 select-none object-contain mix-blend-multiply"
+                  draggable={false}
+                />
+                <div className="mt-2 text-[13px] font-medium text-mute">{t(row.label, row.labelZh)}</div>
                 <div className="mt-0.5 flex items-baseline gap-1">
                   <span className="text-[26px] font-bold leading-none">{row.pct}%</span>
                 </div>
